@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "reel-spec/1",
+  "reelId": "stop-or-continue-demo",
+  "locale": "en-US",
+  "currency": "USD",
+  "format": {
+    "kind": "stop-or-continue",
+    "formatVersion": "1.0.0",
+    "roundCount": 360,
+    "startBankrollMinor": 10000,
+    "displayRoundMilestones": [1, 90, 140, 240, 360],
+    "betMinor": 100,
+    "strategy": {"id": "flat-1", "version": "1.0.0", "config": {}},
+    "decisionPoint": {"mode": "round", "round": 140},
+    "pauseFrames": 75,
+    "revealAlternative": true
+  },
+  "game": {"adapterId": "approx-wheel", "requestedModelVersion": "approximate-v0", "seed": "stop-or-continue-demo-001", "config": {"presetRef": {"id": "carnival-wheel-v0", "version": "1.0.0"}}},
+  "editorial": {"headline": "YOU'RE UP. WOULD YOU STOP?", "subhook": "THE RUN IS ALREADY FROZEN", "disclosure": "Approximate simulation", "selectionDisclosure": "One seeded illustrative run", "tone": "tension"},
+  "compliance": {"ageLabel": "18+", "modelDisclosure": "Illustrative simulation • approximate model • not real game odds", "responsiblePlay": "For entertainment only"},
+  "packs": {"layout": {"id": "vertical-show", "version": "1.0.0"}, "theme": {"id": "carnival-night", "version": "1.0.0"}, "motionAudio": {"id": "tension-show", "version": "1.0.0"}},
+  "render": {"profile": "draft", "fps": 30, "targetDurationFrames": 480}
+}

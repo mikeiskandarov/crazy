@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "reel-spec/1",
+  "reelId": "survive-500-demo",
+  "locale": "en-US",
+  "currency": "USD",
+  "format": {
+    "kind": "survive-500",
+    "formatVersion": "1.0.0",
+    "roundCount": 500,
+    "startBankrollMinor": 10000,
+    "displayRoundMilestones": [1, 100, 250, 400, 500],
+    "populationSize": 1000,
+    "betMinor": 100,
+    "strategy": {"id": "flat-1", "version": "1.0.0", "config": {}},
+    "selection": {"mode": "ranking", "metric": "highest-final-bankroll"}
+  },
+  "game": {
+    "adapterId": "approx-wheel",
+    "requestedModelVersion": "approximate-v0",
+    "seed": "survive-500-demo-0262",
+    "config": {
+      "outcomeTable": [
+        {"id": "miss", "weight": 6850, "grossMultiplierBps": 0, "segmentId": "s0", "eventClass": "loss", "intensity": 0},
+        {"id": "return", "weight": 1300, "grossMultiplierBps": 10000, "segmentId": "s1", "eventClass": "refund", "intensity": 0},
+        {"id": "double", "weight": 900, "grossMultiplierBps": 20000, "segmentId": "s2", "eventClass": "win", "intensity": 1},
+        {"id": "triple", "weight": 450, "grossMultiplierBps": 30000, "segmentId": "s3", "eventClass": "win", "intensity": 1},
+        {"id": "five", "weight": 288, "grossMultiplierBps": 50000, "segmentId": "s5", "eventClass": "win", "intensity": 2},
+        {"id": "ten", "weight": 150, "grossMultiplierBps": 100000, "segmentId": "s10", "eventClass": "win", "intensity": 2},
+        {"id": "feature-15", "weight": 40, "grossMultiplierBps": 150000, "segmentId": "f1", "eventClass": "feature", "intensity": 3},
+        {"id": "feature-30", "weight": 10, "grossMultiplierBps": 300000, "segmentId": "f2", "eventClass": "feature", "intensity": 3},
+        {"id": "feature-50", "weight": 8, "grossMultiplierBps": 500000, "segmentId": "f50", "eventClass": "feature", "intensity": 3},
+        {"id": "feature-100", "weight": 3, "grossMultiplierBps": 1000000, "segmentId": "f100", "eventClass": "feature", "intensity": 3},
+        {"id": "feature-500", "weight": 1, "grossMultiplierBps": 5000000, "segmentId": "f500", "eventClass": "feature", "intensity": 3}
+      ],
+      "rounding": {"decimals": 2, "mode": "half_away_from_zero"}
+    }
+  },
+  "editorial": {
+    "headline": "CAN $100 SURVIVE 500 ROUNDS IN CRAZY TIME?",
+    "subhook": "$1 PER ROUND • 1,000 ILLUSTRATIVE RUNS",
+    "disclosure": "Approximate simulation",
+    "selectionDisclosure": "Best final bankroll across 1,000 illustrative runs",
+    "tone": "tension"
+  },
+  "compliance": {
+    "ageLabel": "18+",
+    "modelDisclosure": "Illustrative simulation • approximate model • not real game odds",
+    "responsiblePlay": "For entertainment only • play responsibly",
+    "noGuaranteeNotice": "Illustrative simulated outcomes do not guarantee future results"
+  },
+  "packs": {
+    "layout": {"id": "vertical-show", "version": "1.0.0"},
+    "theme": {"id": "carnival-night", "version": "1.0.0"},
+    "motionAudio": {"id": "tension-show", "version": "1.0.0"}
+  },
+  "render": {"profile": "draft", "fps": 30, "targetDurationFrames": 540}
+}

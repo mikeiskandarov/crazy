@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "reel-spec/1",
+  "reelId": "impossible-target-demo",
+  "locale": "en-US",
+  "currency": "USD",
+  "format": {
+    "kind": "impossible-target",
+    "formatVersion": "1.0.0",
+    "roundCount": 180,
+    "startBankrollMinor": 100,
+    "displayRoundMilestones": [1, 30, 60, 120, 180],
+    "populationSize": 5000,
+    "betMinor": 100,
+    "strategy": {"id": "target-sprint", "version": "1.0.0", "config": {}},
+    "targetMinor": 1000000,
+    "targetMilestonesMinor": [1000, 10000, 100000, 1000000],
+    "stopWhenFirstTargetReached": false
+  },
+  "game": {"adapterId": "approx-wheel", "requestedModelVersion": "approximate-v0", "seed": "impossible-target-demo-001", "config": {"presetRef": {"id": "carnival-wheel-v0", "version": "1.0.0"}, "allowFinalAllIn": true}},
+  "editorial": {"headline": "CAN $1 BECOME $10,000?", "subhook": "5,000 INDEPENDENT RUNS", "disclosure": "Approximate simulation", "selectionDisclosure": "5,000 independent illustrative runs", "tone": "spectacle"},
+  "compliance": {"ageLabel": "18+", "modelDisclosure": "Illustrative simulation • approximate model • not real game odds", "responsiblePlay": "For entertainment only"},
+  "packs": {"layout": {"id": "vertical-show", "version": "1.0.0"}, "theme": {"id": "carnival-night", "version": "1.0.0"}, "motionAudio": {"id": "tension-show", "version": "1.0.0"}},
+  "render": {"profile": "draft", "fps": 30, "targetDurationFrames": 480}
+}

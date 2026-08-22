@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "host-source-candidates/1",
+  "status": "awaiting-rights-cleared-source-files",
+  "selectionPolicy": "Choose one clip deterministically from the ten-slot pool after licensed local source files are supplied.",
+  "notes": "YouTube links are research references only. Do not download, crop, remove backgrounds from, or publish these presenters without permission from the video and likeness rights holders.",
+  "candidates": [
+    {"slot": 1, "sourceTitle": "Crazy Time Tutorial | Evolution", "sourceUrl": "https://www.youtube.com/watch?v=1n9AZftErUs", "suggestedRangeSeconds": [8, 13]},
+    {"slot": 2, "sourceTitle": "Crazy Time Tutorial | Evolution", "sourceUrl": "https://www.youtube.com/watch?v=1n9AZftErUs", "suggestedRangeSeconds": [20, 25]},
+    {"slot": 3, "sourceTitle": "Crazy Time Tutorial | Evolution", "sourceUrl": "https://www.youtube.com/watch?v=1n9AZftErUs", "suggestedRangeSeconds": [34, 39]},
+    {"slot": 4, "sourceTitle": "The Making of Crazy Time | Evolution", "sourceUrl": "https://www.youtube.com/watch?v=ziD1niOTVPI", "suggestedRangeSeconds": [12, 17]},
+    {"slot": 5, "sourceTitle": "The Making of Crazy Time | Evolution", "sourceUrl": "https://www.youtube.com/watch?v=ziD1niOTVPI", "suggestedRangeSeconds": [42, 47]},
+    {"slot": 6, "sourceTitle": "The Making of Crazy Time | Evolution", "sourceUrl": "https://www.youtube.com/watch?v=ziD1niOTVPI", "suggestedRangeSeconds": [68, 73]},
+    {"slot": 7, "sourceTitle": "Crazy Time Big Wins | Evolution", "sourceUrl": "https://www.youtube.com/watch?v=o4niai6SXWk", "suggestedRangeSeconds": [5, 10]},
+    {"slot": 8, "sourceTitle": "Crazy Time Big Wins | Evolution", "sourceUrl": "https://www.youtube.com/watch?v=o4niai6SXWk", "suggestedRangeSeconds": [28, 33]},
+    {"slot": 9, "sourceTitle": "Crazy Time - The Most Fun Casino Game Ever | Evolution", "sourceUrl": "https://www.youtube.com/watch?v=Df2LeqkHANs", "suggestedRangeSeconds": [8, 13]},
+    {"slot": 10, "sourceTitle": "Crazy Time - The Most Fun Casino Game Ever | Evolution", "sourceUrl": "https://www.youtube.com/watch?v=Df2LeqkHANs", "suggestedRangeSeconds": [42, 47]}
+  ]
+}

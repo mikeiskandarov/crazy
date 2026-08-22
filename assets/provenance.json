@@ -1,0 +1,364 @@
+{
+  "schemaVersion": "asset-provenance/1",
+  "assets": [
+    {
+      "assetId": "brand-winmath-logo",
+      "path": "public/assets/brand/winmath-logo.svg",
+      "sha256": "7ec278f6a5ebfb99c571c4ebb56aab62e332c5e1ed863ddcbd359d115cf167b3",
+      "mediaType": "image/svg+xml",
+      "required": true,
+      "usage": "render",
+      "provenance": {
+        "provenanceId": "original-winmath-wordmark-v1",
+        "sourceType": "original",
+        "author": "WinMath project",
+        "license": "Original project asset",
+        "allowedUsage": ["internal", "public", "commercial"],
+        "notes": "Original SVG wordmark created for the WinMath reel identity."
+      }
+    },
+    {
+      "assetId": "brand-crazy-time-logo",
+      "path": "public/assets/brand/crazy-time-logo.png",
+      "sha256": "3de927fb70add3ae4296fc005176931cc31e63085b1c6bdbc0fa61facd9248ea",
+      "mediaType": "image/png",
+      "required": true,
+      "usage": "render",
+      "provenance": {
+        "provenanceId": "user-supplied-crazy-time-logo-2026-08-22",
+        "sourceType": "reference-only",
+        "author": "User-supplied brand asset",
+        "license": "Trademarked third-party logo; rights not independently verified",
+        "allowedUsage": ["internal"],
+        "notes": "Temporary user-supplied Crazy Time logo. Clear brand usage rights before public or commercial publication."
+      }
+    },
+    {
+      "assetId": "background-crazy-time-wonderland",
+      "path": "public/assets/backgrounds/crazy-time-wonderland-v1.png",
+      "sha256": "a564d606e14928755c40076aa79a1082fd2e6ec3ef7941ae4866d578ade058a6",
+      "mediaType": "image/png",
+      "required": true,
+      "usage": "render",
+      "provenance": {
+        "provenanceId": "openai-generated-crazy-time-wonderland-v1",
+        "sourceType": "generated",
+        "author": "OpenAI image generation",
+        "license": "Original AI-generated project asset",
+        "allowedUsage": ["internal", "public", "commercial"],
+        "notes": "Original 9:16 carnival wonderland background generated for this project from a user-provided mood reference; it contains no copied logo, text, UI, or casino wheel."
+      }
+    },
+    {
+      "assetId": "hook-question-elevenlabs",
+      "path": "public/assets/audio/hook-question-elevenlabs.mp3",
+      "sha256": "ade1f01e93e558366472dfa519e5211f9faebdb11ff64dfebc21f77772f8607a",
+      "mediaType": "audio/mpeg",
+      "required": true,
+      "usage": "audio",
+      "provenance": {
+        "provenanceId": "elevenlabs-brian-v3-crazy-time-2026-08-22",
+        "sourceType": "generated",
+        "sourceUri": "https://elevenlabs.io/app/speech-synthesis/text-to-speech",
+        "author": "ElevenLabs • Brian voice • Eleven v3",
+        "license": "ElevenLabs Free plan; commercial use not cleared",
+        "allowedUsage": ["internal"],
+        "notes": "Generated from: [dramatic] Can one hundred dollars survive... five hundred rounds... in Crazy Time? Upgrade/rights review required before public or commercial publication."
+      }
+    },
+    {
+      "assetId": "music-bed-elevenlabs",
+      "path": "public/assets/audio/music-bed-elevenlabs.mp4",
+      "sha256": "718943a2a8150f226ef583a6192615c9590f1ec8fb2b3587d370e440500341fd",
+      "mediaType": "audio/mp4",
+      "required": true,
+      "usage": "audio",
+      "provenance": {
+        "provenanceId": "elevenlabs-high-stakes-music-v2-2026-08-22",
+        "sourceType": "generated",
+        "sourceUri": "https://elevenlabs.io/app/music",
+        "author": "ElevenLabs Music v2",
+        "license": "ElevenLabs Free plan; commercial use not cleared",
+        "allowedUsage": ["internal"],
+        "notes": "18-second instrumental dark luxury casino tension bed generated with lyrics disabled. Upgrade/rights review required before public or commercial publication."
+      }
+    },
+    {
+      "assetId": "font-impact",
+      "path": "public/assets/fonts/archivo-black-latin-400-normal.woff2",
+      "sha256": "25f33e61cf995abd6be62931cf03bf427286259177b43618cc410ee0157cfd30",
+      "mediaType": "font/woff2",
+      "required": true,
+      "usage": "font",
+      "provenance": {
+        "provenanceId": "fontsource-archivo-black-5-3-0",
+        "sourceType": "licensed",
+        "sourceUri": "https://fontsource.org/fonts/archivo-black",
+        "author": "Archivo Black",
+        "license": "SIL Open Font License 1.1",
+        "allowedUsage": [
+          "internal",
+          "public",
+          "commercial"
+        ],
+        "notes": "Vendored from pinned @fontsource package; license text stored under assets/licenses."
+      }
+    },
+    {
+      "assetId": "font-condensed",
+      "path": "public/assets/fonts/barlow-condensed-latin-700-normal.woff2",
+      "sha256": "3787a5a419171630e6890cfa47c4da067474d005cd0ff8dc11ec090fdc3ee2b8",
+      "mediaType": "font/woff2",
+      "required": true,
+      "usage": "font",
+      "provenance": {
+        "provenanceId": "fontsource-barlow-condensed-5-3-0",
+        "sourceType": "licensed",
+        "sourceUri": "https://fontsource.org/fonts/barlow-condensed",
+        "author": "Barlow Condensed",
+        "license": "SIL Open Font License 1.1",
+        "allowedUsage": [
+          "internal",
+          "public",
+          "commercial"
+        ],
+        "notes": "Vendored from pinned @fontsource package; license text stored under assets/licenses."
+      }
+    },
+    {
+      "assetId": "font-ui",
+      "path": "public/assets/fonts/inter-latin-600-normal.woff2",
+      "sha256": "f9a06e79cd3a2a20951c0f0e28f66dd0e6d3fda73911d640a2125c8fcb78f21a",
+      "mediaType": "font/woff2",
+      "required": true,
+      "usage": "font",
+      "provenance": {
+        "provenanceId": "fontsource-inter-5-3-0",
+        "sourceType": "licensed",
+        "sourceUri": "https://fontsource.org/fonts/inter",
+        "author": "Inter",
+        "license": "SIL Open Font License 1.1",
+        "allowedUsage": [
+          "internal",
+          "public",
+          "commercial"
+        ],
+        "notes": "Vendored from pinned @fontsource package; license text stored under assets/licenses."
+      }
+    },
+    {
+      "assetId": "music-bed",
+      "path": "public/assets/audio/music-bed.wav",
+      "sha256": "8d8552717955664e388fa7295e5177f52a42a64e3f70b2fd907cc3efa684ce7c",
+      "mediaType": "audio/wav",
+      "required": true,
+      "usage": "audio",
+      "provenance": {
+        "provenanceId": "original-procedural-music-bed-v1",
+        "sourceType": "original",
+        "author": "Casino Reel Builder",
+        "license": "Original project asset",
+        "allowedUsage": [
+          "internal",
+          "public",
+          "commercial"
+        ],
+        "notes": "Deterministically synthesized at 48 kHz by scripts/generate-original-assets.ts; no third-party samples."
+      }
+    },
+    {
+      "assetId": "hook-impact",
+      "path": "public/assets/audio/hook-impact.wav",
+      "sha256": "77fb1e16f1a2423b2ea02d00541c1ddb0b953da2dcd64088c295f5609f97fda9",
+      "mediaType": "audio/wav",
+      "required": true,
+      "usage": "audio",
+      "provenance": {
+        "provenanceId": "original-procedural-hook-impact-v1",
+        "sourceType": "original",
+        "author": "Casino Reel Builder",
+        "license": "Original project asset",
+        "allowedUsage": [
+          "internal",
+          "public",
+          "commercial"
+        ],
+        "notes": "Deterministically synthesized at 48 kHz by scripts/generate-original-assets.ts; no third-party samples."
+      }
+    },
+    {
+      "assetId": "ui-tick",
+      "path": "public/assets/audio/ui-tick.wav",
+      "sha256": "89932210a900686644db07caba62e173444265e0a42e6a172789fa80805df034",
+      "mediaType": "audio/wav",
+      "required": true,
+      "usage": "audio",
+      "provenance": {
+        "provenanceId": "original-procedural-ui-tick-v1",
+        "sourceType": "original",
+        "author": "Casino Reel Builder",
+        "license": "Original project asset",
+        "allowedUsage": [
+          "internal",
+          "public",
+          "commercial"
+        ],
+        "notes": "Deterministically synthesized at 48 kHz by scripts/generate-original-assets.ts; no third-party samples."
+      }
+    },
+    {
+      "assetId": "wheel-tick",
+      "path": "public/assets/audio/wheel-tick.wav",
+      "sha256": "36e8c75e5c10565a60ecc6e10037cefb46980e9f01d866043a884294db3cc960",
+      "mediaType": "audio/wav",
+      "required": true,
+      "usage": "audio",
+      "provenance": {
+        "provenanceId": "original-procedural-wheel-tick-v1",
+        "sourceType": "original",
+        "author": "Casino Reel Builder",
+        "license": "Original project asset",
+        "allowedUsage": [
+          "internal",
+          "public",
+          "commercial"
+        ],
+        "notes": "Deterministically synthesized at 48 kHz by scripts/generate-original-assets.ts; no third-party samples."
+      }
+    },
+    {
+      "assetId": "riser",
+      "path": "public/assets/audio/riser.wav",
+      "sha256": "33029ea6881fc5802fbcbf2261f1651996b561f4a37539568ee9adcc11321e90",
+      "mediaType": "audio/wav",
+      "required": true,
+      "usage": "audio",
+      "provenance": {
+        "provenanceId": "original-procedural-riser-v1",
+        "sourceType": "original",
+        "author": "Casino Reel Builder",
+        "license": "Original project asset",
+        "allowedUsage": [
+          "internal",
+          "public",
+          "commercial"
+        ],
+        "notes": "Deterministically synthesized at 48 kHz by scripts/generate-original-assets.ts; no third-party samples."
+      }
+    },
+    {
+      "assetId": "warning-pulse",
+      "path": "public/assets/audio/warning-pulse.wav",
+      "sha256": "ba40bc673a8625379fe8f5ae9b3daa46a994e9d377e0a3efed9ca0f40b38ec41",
+      "mediaType": "audio/wav",
+      "required": true,
+      "usage": "audio",
+      "provenance": {
+        "provenanceId": "original-procedural-warning-pulse-v1",
+        "sourceType": "original",
+        "author": "Casino Reel Builder",
+        "license": "Original project asset",
+        "allowedUsage": [
+          "internal",
+          "public",
+          "commercial"
+        ],
+        "notes": "Deterministically synthesized at 48 kHz by scripts/generate-original-assets.ts; no third-party samples."
+      }
+    },
+    {
+      "assetId": "reveal-impact",
+      "path": "public/assets/audio/reveal-impact.wav",
+      "sha256": "64d0d93fe49693c2405dc5d31e9c19c2a09f597f63eabe438072d9804620ba52",
+      "mediaType": "audio/wav",
+      "required": true,
+      "usage": "audio",
+      "provenance": {
+        "provenanceId": "original-procedural-reveal-impact-v1",
+        "sourceType": "original",
+        "author": "Casino Reel Builder",
+        "license": "Original project asset",
+        "allowedUsage": [
+          "internal",
+          "public",
+          "commercial"
+        ],
+        "notes": "Deterministically synthesized at 48 kHz by scripts/generate-original-assets.ts; no third-party samples."
+      }
+    },
+    {
+      "assetId": "result-resolve",
+      "path": "public/assets/audio/result-resolve.wav",
+      "sha256": "3aeaca2fd9f92e12e1d4ac3c00f10b3016439524c3adee1a21f077302a5a385c",
+      "mediaType": "audio/wav",
+      "required": true,
+      "usage": "audio",
+      "provenance": {
+        "provenanceId": "original-procedural-result-resolve-v1",
+        "sourceType": "original",
+        "author": "Casino Reel Builder",
+        "license": "Original project asset",
+        "allowedUsage": [
+          "internal",
+          "public",
+          "commercial"
+        ],
+        "notes": "Deterministically synthesized at 48 kHz by scripts/generate-original-assets.ts; no third-party samples."
+      }
+    },
+    {
+      "assetId": "celebration",
+      "path": "public/assets/audio/celebration.wav",
+      "sha256": "0f3c48ac8788391dc26834010e39eb9ab57a6cb3bb881c9a2e8410b70ba4ce29",
+      "mediaType": "audio/wav",
+      "required": true,
+      "usage": "audio",
+      "provenance": {
+        "provenanceId": "original-procedural-celebration-v1",
+        "sourceType": "original",
+        "author": "Casino Reel Builder",
+        "license": "Original project asset",
+        "allowedUsage": [
+          "internal",
+          "public",
+          "commercial"
+        ],
+        "notes": "Deterministically synthesized at 48 kHz by scripts/generate-original-assets.ts; no third-party samples."
+      }
+    },
+    {
+      "assetId": "host-presenter-01",
+      "path": "public/assets/hosts/host-01.webm",
+      "sha256": "aed4d6a9ca616ad516ea2299c2b8f6495e47fc6cb6d20a54e2583a415cfd8b91",
+      "mediaType": "video/webm",
+      "required": true,
+      "usage": "render",
+      "provenance": {
+        "provenanceId": "youtube-presenter-cutout-4aydvl6qr4-2026-08-22",
+        "sourceType": "reference-only",
+        "sourceUri": "https://www.youtube.com/watch?v=4aYDv_L6qR4",
+        "author": "Third-party YouTube upload",
+        "license": "Rights not independently verified",
+        "allowedUsage": ["internal"],
+        "notes": "User-requested short presenter overlay with the background removed. Clear appearance and source-video rights before public or commercial publication."
+      }
+    },
+    {
+      "assetId": "host-presenter-02",
+      "path": "public/assets/hosts/host-02.webm",
+      "sha256": "36f708de90ec03511efb79ef312f3341089b9646c13b2320e229d3ee8840d37e",
+      "mediaType": "video/webm",
+      "required": true,
+      "usage": "render",
+      "provenance": {
+        "provenanceId": "youtube-presenter-cutout-7hpk5pooilu-2026-08-22",
+        "sourceType": "reference-only",
+        "sourceUri": "https://www.youtube.com/watch?v=7HpK5pOoiLU",
+        "author": "Third-party YouTube upload",
+        "license": "Rights not independently verified",
+        "allowedUsage": ["internal"],
+        "notes": "User-requested short presenter overlay with the background removed. Clear appearance and source-video rights before public or commercial publication."
+      }
+    }
+  ]
+}

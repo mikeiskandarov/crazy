@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "reel-batch/1",
+  "batchId": "all-formats-smoke",
+  "specs": [
+    "specs/examples/survive-500.json",
+    "specs/examples/luckiest-player.json",
+    "specs/examples/stop-or-continue.json",
+    "specs/examples/one-vs-ten.json",
+    "specs/examples/impossible-target.json",
+    "specs/examples/last-man-standing.json",
+    "specs/examples/race-to-1000.json"
+  ]
+}

@@ -1,0 +1,9 @@
+node_modules/
+.remotion/
+.cache/
+output/
+coverage/
+dist/
+*.log
+.DS_Store
+:memory:.ses

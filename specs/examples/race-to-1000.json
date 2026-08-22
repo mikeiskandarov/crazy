@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "reel-spec/1",
+  "reelId": "race-to-1000-demo",
+  "locale": "en-US",
+  "currency": "USD",
+  "format": {
+    "kind": "race-to-1000",
+    "formatVersion": "1.0.0",
+    "roundCount": 300,
+    "startBankrollMinor": 1000,
+    "displayRoundMilestones": [1, 50, 100, 200, 300],
+    "racerCount": 8,
+    "targetMinor": 100000,
+    "sharedOutcomeStream": true,
+    "racers": [
+      {"racerId": "safe", "label": "SAFE", "betMinor": 100, "strategy": {"id": "flat-1", "version": "1.0.0", "config": {}}},
+      {"racerId": "bold", "label": "BOLD", "betMinor": 300, "strategy": {"id": "flat-3", "version": "1.0.0", "config": {}}},
+      {"racerId": "f10", "label": "10%", "betMinor": 100, "strategy": {"id": "fraction-10", "version": "1.0.0", "config": {}}},
+      {"racerId": "f20", "label": "20%", "betMinor": 100, "strategy": {"id": "fraction-20", "version": "1.0.0", "config": {}}},
+      {"racerId": "press", "label": "PRESS", "betMinor": 100, "strategy": {"id": "press-wins", "version": "1.0.0", "config": {}}},
+      {"racerId": "reduce", "label": "REDUCE", "betMinor": 100, "strategy": {"id": "reduce-after-loss", "version": "1.0.0", "config": {}}},
+      {"racerId": "guard", "label": "GUARD", "betMinor": 100, "strategy": {"id": "stop-loss-5", "version": "1.0.0", "config": {}}},
+      {"racerId": "sprint", "label": "SPRINT", "betMinor": 100, "strategy": {"id": "target-sprint", "version": "1.0.0", "config": {}}}
+    ]
+  },
+  "game": {"adapterId": "approx-wheel", "requestedModelVersion": "approximate-v0", "seed": "race-to-1000-demo-001", "config": {"presetRef": {"id": "carnival-wheel-v0", "version": "1.0.0"}, "allowFinalAllIn": true}},
+  "editorial": {"headline": "WHO CAN TURN $10 INTO $1,000 FIRST?", "subhook": "SAME SPINS • 8 BETTING RULES", "disclosure": "Approximate simulation", "tone": "analytical"},
+  "compliance": {"ageLabel": "18+", "modelDisclosure": "Illustrative simulation • approximate model • not real game odds", "responsiblePlay": "For entertainment only"},
+  "packs": {"layout": {"id": "vertical-show", "version": "1.0.0"}, "theme": {"id": "carnival-night", "version": "1.0.0"}, "motionAudio": {"id": "tension-show", "version": "1.0.0"}},
+  "render": {"profile": "draft", "fps": 30, "targetDurationFrames": 480}
+}

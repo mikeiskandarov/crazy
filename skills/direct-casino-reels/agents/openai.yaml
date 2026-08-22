@@ -1,0 +1,4 @@
+interface:
+  display_name: "Direct Casino Reels"
+  short_description: "Direct and review premium casino Reels"
+  default_prompt: "Use $direct-casino-reels to art-direct and review a premium vertical casino Reel."

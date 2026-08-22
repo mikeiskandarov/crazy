@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "reel-spec/1",
+  "reelId": "last-man-standing-demo",
+  "locale": "en-US",
+  "currency": "USD",
+  "format": {
+    "kind": "last-man-standing",
+    "formatVersion": "1.0.0",
+    "roundCount": 500,
+    "startBankrollMinor": 10000,
+    "displayRoundMilestones": [1, 100, 250, 400, 500],
+    "populationSize": 1000,
+    "betMinor": 100,
+    "strategy": {"id": "flat-1", "version": "1.0.0", "config": {}},
+    "eliminationAtOrBelowMinor": 0,
+    "stopAtSurvivors": 1
+  },
+  "game": {"adapterId": "approx-wheel", "requestedModelVersion": "approximate-v0", "seed": "last-man-standing-demo-001", "config": {"presetRef": {"id": "carnival-wheel-v0", "version": "1.0.0"}}},
+  "editorial": {"headline": "1,000 PLAYERS START WITH $100. WHO SURVIVES?", "subhook": "INDEPENDENT ILLUSTRATIVE RUNS", "disclosure": "Approximate simulation", "selectionDisclosure": "1,000 independent illustrative runs", "tone": "tension"},
+  "compliance": {"ageLabel": "18+", "modelDisclosure": "Illustrative simulation • approximate model • not real game odds", "responsiblePlay": "For entertainment only"},
+  "packs": {"layout": {"id": "vertical-show", "version": "1.0.0"}, "theme": {"id": "carnival-night", "version": "1.0.0"}, "motionAudio": {"id": "tension-show", "version": "1.0.0"}},
+  "render": {"profile": "draft", "fps": 30, "targetDurationFrames": 480}
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "reel-spec/1",
+  "reelId": "one-vs-ten-demo",
+  "locale": "en-US",
+  "currency": "USD",
+  "format": {
+    "kind": "one-vs-ten",
+    "formatVersion": "1.0.0",
+    "roundCount": 300,
+    "startBankrollMinor": 10000,
+    "displayRoundMilestones": [1, 75, 150, 225, 300],
+    "left": {"label": "$1", "betMinor": 100, "strategy": {"id": "flat-1", "version": "1.0.0", "config": {}}},
+    "right": {"label": "$10", "betMinor": 1000, "strategy": {"id": "flat-10", "version": "1.0.0", "config": {}}},
+    "sharedOutcomeStream": true,
+    "finish": {"mode": "round-limit"}
+  },
+  "game": {"adapterId": "approx-wheel", "requestedModelVersion": "approximate-v0", "seed": "one-vs-ten-demo-001", "config": {"presetRef": {"id": "carnival-wheel-v0", "version": "1.0.0"}}},
+  "editorial": {"headline": "SAME $100. SAME SPINS. $1 VS $10.", "subhook": "ONE SHARED OUTCOME STREAM", "disclosure": "Approximate simulation", "tone": "analytical"},
+  "compliance": {"ageLabel": "18+", "modelDisclosure": "Illustrative simulation • approximate model • not real game odds", "responsiblePlay": "For entertainment only"},
+  "packs": {"layout": {"id": "vertical-show", "version": "1.0.0"}, "theme": {"id": "carnival-night", "version": "1.0.0"}, "motionAudio": {"id": "tension-show", "version": "1.0.0"}},
+  "render": {"profile": "draft", "fps": 30, "targetDurationFrames": 480}
+}

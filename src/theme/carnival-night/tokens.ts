@@ -1,0 +1,33 @@
+export const carnivalNightTokens = {
+  color: {
+    background: '#07060B',
+    stageOxblood: '#2B0814',
+    stagePlum: '#2B0D4A',
+    surface: '#0E0D12',
+    surfaceRaised: '#17141C',
+    textPrimary: '#F7F2EA',
+    textSecondary: '#AAA5AE',
+    positive: '#45D65E',
+    warning: '#FFB21C',
+    danger: '#FF4438',
+    neutral: '#B9B3C1',
+    gold: '#F7B51A',
+    champagne: '#FFE7A3',
+    accentViolet: '#8E5CFF',
+  },
+  typography: {
+    display: 'Archivo Black',
+    impact: 'Archivo Black',
+    condensed: 'Barlow Condensed',
+    ui: 'Inter',
+  },
+  material: {
+    panelRadius: 28,
+    panelBorder: 3,
+    lacquerHighlightOpacity: 0.14,
+    metalSpecularWidth: 0.18,
+  },
+  stroke: {hairline: 2, regular: 4, impact: 6},
+  shadow: {panelBlur: 28, heroBlur: 48, contactBlur: 18},
+  fx: {glowBudget: 0.68, particleCountDraft: 28, particleCountFinal: 72},
+} as const;

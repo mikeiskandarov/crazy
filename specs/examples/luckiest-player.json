@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "reel-spec/1",
+  "reelId": "luckiest-player-demo",
+  "locale": "en-US",
+  "currency": "USD",
+  "format": {
+    "kind": "luckiest-player",
+    "formatVersion": "1.0.0",
+    "roundCount": 240,
+    "startBankrollMinor": 10000,
+    "displayRoundMilestones": [1, 60, 120, 180, 240],
+    "populationSize": 10000,
+    "betMinor": 100,
+    "strategy": {"id": "flat-1", "version": "1.0.0", "config": {}},
+    "rankingMetric": "highest-peak",
+    "discloseSelection": true
+  },
+  "game": {"adapterId": "approx-wheel", "requestedModelVersion": "approximate-v0", "seed": "luckiest-player-demo-001", "config": {"presetRef": {"id": "carnival-wheel-v0", "version": "1.0.0"}}},
+  "editorial": {"headline": "WE SIMULATED 10,000 PLAYERS. THIS WAS #1.", "subhook": "RANKED BY HIGHEST PEAK", "disclosure": "Approximate simulation", "selectionDisclosure": "Highest peak out of 10,000 illustrative runs", "tone": "spectacle"},
+  "compliance": {"ageLabel": "18+", "modelDisclosure": "Illustrative simulation • approximate model • not real game odds", "responsiblePlay": "For entertainment only"},
+  "packs": {"layout": {"id": "vertical-show", "version": "1.0.0"}, "theme": {"id": "carnival-night", "version": "1.0.0"}, "motionAudio": {"id": "tension-show", "version": "1.0.0"}},
+  "render": {"profile": "draft", "fps": 30, "targetDurationFrames": 480}
+}
