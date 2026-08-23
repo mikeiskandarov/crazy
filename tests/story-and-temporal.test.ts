@@ -6,6 +6,7 @@ import {ApproxGameAdapter} from '../src/game/approximate/adapter';
 import {resolveVisualState} from '../src/render/visual-state';
 import {createFormatRegistry} from '../src/story/format-registry';
 import {assertTemporalTruth} from '../src/story/temporal-truth';
+import {simulationSeedForSpec} from '../src/experiment/attempt';
 
 describe('StoryPlan and temporal truth', () => {
   it('compiles all registered formats deterministically', async () => {
@@ -14,7 +15,7 @@ describe('StoryPlan and temporal truth', () => {
     expect(formats.list()).toHaveLength(7);
     for (const kind of FORMAT_KINDS) {
       const spec = await loadAuthorReelSpec(path.resolve(`specs/examples/${kind}.json`));
-      const simulation = await adapter.simulate({spec, config: adapter.validateConfig(spec.game.config)});
+      const simulation = await adapter.simulate({spec, config: adapter.validateConfig(spec.game.config), simulationSeed: simulationSeedForSpec(spec)});
       const definition = formats.resolve(spec.format.kind, spec.format.formatVersion);
       const config = definition.validate(spec.format);
       const first = definition.compile({spec, simulation, config});
@@ -31,13 +32,15 @@ describe('StoryPlan and temporal truth', () => {
   it('never projects future trajectory or final result before reveal', async () => {
     const spec = await loadAuthorReelSpec(path.resolve('specs/examples/survive-500.json'));
     const adapter = new ApproxGameAdapter();
-    const simulation = await adapter.simulate({spec, config: adapter.validateConfig(spec.game.config)});
+    const simulation = await adapter.simulate({spec, config: adapter.validateConfig(spec.game.config), simulationSeed: simulationSeedForSpec(spec)});
     const definition = createFormatRegistry().resolve(spec.format.kind, spec.format.formatVersion);
     const story = definition.compile({spec, simulation, config: definition.validate(spec.format)});
     const revealFrame = story.revealRegistry.find((rule) => rule.revealId === 'final-result')!.earliestFrame;
     for (const frame of [0, 20, 54, 137, 188, 245, 335, revealFrame - 1]) {
       const state = resolveVisualState({frame, spec, simulation, story});
       expect(state.finalResult, `frame ${frame}`).toBeUndefined();
+      expect(state.survivalExperience?.resultCategories, `frame ${frame}`).toBeUndefined();
+      expect(state.survivalExperience?.selectedFinalBankrollMinor, `frame ${frame}`).toBeUndefined();
       for (const run of state.runs) {
         expect(run.points.every((point) => point.round <= state.currentRound), `frame ${frame}`).toBe(true);
         expect(run.visiblePeakMinor).toBe(run.points.reduce((peak, point) => Math.max(peak, point.bankrollAfterMinor), run.startBankrollMinor));
@@ -48,12 +51,18 @@ describe('StoryPlan and temporal truth', () => {
     const revealed = resolveVisualState({frame: revealFrame, spec, simulation, story});
     expect(revealed.finalResult?.headline).toMatch(/BEST FINAL|BUSTED/);
     expect(revealed.runs[0]?.points.at(-1)?.round).toBeLessThanOrEqual(revealed.currentRound);
+    expect(revealed.survivalExperience?.resultCategories).toHaveLength(3);
+    expect(revealed.survivalExperience?.resultCategories).toEqual([
+      {id: 'rare-lucky', label: 'RARE LUCKY', rangeLabel: '$500–$2,000', count: 7},
+      {id: 'very-lucky', label: 'VERY LUCKY', rangeLabel: '$3,000–$10,000', count: 2},
+      {id: 'best-of-population', label: 'BEST OF 1,000', rangeLabel: '$10,000–$30,000 FORECAST', amountMinor: 1_505_700},
+    ]);
   });
 
   it('keeps selected-run disclosure factual and complete', async () => {
     const spec = await loadAuthorReelSpec(path.resolve('specs/examples/survive-500.json'));
     const adapter = new ApproxGameAdapter();
-    const simulation = await adapter.simulate({spec, config: adapter.validateConfig(spec.game.config)});
+    const simulation = await adapter.simulate({spec, config: adapter.validateConfig(spec.game.config), simulationSeed: simulationSeedForSpec(spec)});
     expect(simulation.selectionAudit).toMatchObject({
       consideredCount: 1000,
       disclosedAs: 'BEST FINAL BANKROLL ACROSS 1,000 ILLUSTRATIVE RUNS',
@@ -63,27 +72,28 @@ describe('StoryPlan and temporal truth', () => {
     expect(simulation.population?.rankedCandidates[0]?.scoreId).toBe('highest-final-bankroll');
   });
 
-  it('keeps the survival verdict positive-realistic and highlights the biggest hit in the best run', async () => {
+  it('keeps the survival verdict inside the Crazy Time forecast tiers and highlights the biggest hit in the best run', async () => {
     const spec = await loadAuthorReelSpec(path.resolve('specs/examples/survive-500.json'));
     const adapter = new ApproxGameAdapter();
-    const simulation = await adapter.simulate({spec, config: adapter.validateConfig(spec.game.config)});
+    const simulation = await adapter.simulate({spec, config: adapter.validateConfig(spec.game.config), simulationSeed: simulationSeedForSpec(spec)});
     const finalMilestone = simulation.population?.milestones.at(-1);
     const selectedRun = simulation.featuredRuns[0]!;
     const eventIds = new Set(selectedRun.points.map((point) => point.outcomeEventId));
     const bestOutcome = simulation.outcomeStreams.flatMap((stream) => stream.events)
       .filter((event) => eventIds.has(event.eventId))
       .sort((left, right) => right.grossMultiplierBps - left.grossMultiplierBps)[0];
-    expect(finalMilestone?.aliveCount).toBeGreaterThanOrEqual(600);
-    expect(finalMilestone?.aliveCount).toBeLessThanOrEqual(700);
-    expect(selectedRun.summary.finalBankrollMinor).toBe(106_200);
-    expect(bestOutcome?.outcomeLabel).toBe('500×');
-    expect(bestOutcome?.segmentId).toBe('f500');
+    expect(finalMilestone?.aliveCount).toBe(805);
+    expect(selectedRun.summary.finalBankrollMinor).toBeGreaterThanOrEqual(1_000_000);
+    expect(selectedRun.summary.finalBankrollMinor).toBeLessThanOrEqual(3_000_000);
+    expect(selectedRun.summary.finalBankrollMinor).toBe(1_505_700);
+    expect(bestOutcome?.outcomeLabel).toBe('15000×');
+    expect(bestOutcome?.segmentId).toBe('ct-15000');
   });
 
   it('settles every material wheel cue on its exact visible outcome', async () => {
     const spec = await loadAuthorReelSpec(path.resolve('specs/examples/survive-500.json'));
     const adapter = new ApproxGameAdapter();
-    const simulation = await adapter.simulate({spec, config: adapter.validateConfig(spec.game.config)});
+    const simulation = await adapter.simulate({spec, config: adapter.validateConfig(spec.game.config), simulationSeed: simulationSeedForSpec(spec)});
     const definition = createFormatRegistry().resolve(spec.format.kind, spec.format.formatVersion);
     const story = definition.compile({spec, simulation, config: definition.validate(spec.format)});
     const segments = resolveVisualState({frame: 0, spec, simulation, story}).wheel.segments;

@@ -17,6 +17,7 @@ import {selectGoldenFrames, type SelectedFrame} from './frame-selector';
 import type {RenderInputProps} from './types';
 
 const chromeExecutable = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const aacTruePeakSafetyMarginDb = 0.4;
 const execFileAsync = promisify(execFile);
 let bundlePromise: Promise<string> | undefined;
 
@@ -208,7 +209,12 @@ export async function renderVideo(input: RenderDataInput, options: {frameRange?:
   });
   if (shouldNormalize) {
     const loudness = createPackRegistry().resolveMotionAudio(input.spec.packs.motionAudio.id, input.spec.packs.motionAudio.version).loudness;
-    await normalizeLoudness({input: remotionOutput, output, targetLufs: loudness.targetLufs, truePeakDb: loudness.truePeakDb});
+    await normalizeLoudness({
+      input: remotionOutput,
+      output,
+      targetLufs: loudness.targetLufs,
+      truePeakDb: loudness.truePeakDb - aacTruePeakSafetyMarginDb,
+    });
     await unlink(remotionOutput);
   }
   return output;

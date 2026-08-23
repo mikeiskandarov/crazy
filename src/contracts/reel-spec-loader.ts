@@ -8,15 +8,17 @@ import {readJson} from '../core/files';
 export interface ReelSpecOverrides {
   profile?: 'draft' | 'final' | 'public';
   seed?: string;
+  attempt?: number;
 }
 
 export function canonicalizeReelSpec(input: unknown, overrides: ReelSpecOverrides = {}): DeepReadonly<ReelSpecV1> {
   const draft = structuredClone(input) as Record<string, unknown>;
-  if (overrides.profile || overrides.seed) {
+  if (overrides.profile || overrides.seed || overrides.attempt !== undefined) {
     const render = draft.render as Record<string, unknown> | undefined;
     const game = draft.game as Record<string, unknown> | undefined;
     if (overrides.profile && render) render.profile = overrides.profile;
     if (overrides.seed && game) game.seed = overrides.seed;
+    if (overrides.attempt !== undefined) draft.experiment = {attempt: overrides.attempt};
   }
   const parsed = parseAuthorReelSpec(draft);
   return buildArtifact<ReelSpecV1>({

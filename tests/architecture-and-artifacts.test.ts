@@ -9,6 +9,7 @@ import {writeJsonStable} from '../src/core/files';
 import {ApproxGameAdapter} from '../src/game/approximate/adapter';
 import {buildRenderManifest} from '../src/render/manifest-builder';
 import {createFormatRegistry} from '../src/story/format-registry';
+import {simulationSeedForSpec} from '../src/experiment/attempt';
 
 async function sourceFiles(root: string): Promise<string[]> {
   const entries = await readdir(root, {withFileTypes: true});
@@ -56,7 +57,7 @@ describe('architecture and frozen artifacts', () => {
   it('builds a deterministic, fully resolved render manifest', async () => {
     const spec = await loadAuthorReelSpec(path.resolve('specs/examples/survive-500.json'));
     const adapter = new ApproxGameAdapter();
-    const simulation = await adapter.simulate({spec, config: adapter.validateConfig(spec.game.config)});
+    const simulation = await adapter.simulate({spec, config: adapter.validateConfig(spec.game.config), simulationSeed: simulationSeedForSpec(spec)});
     const format = createFormatRegistry().resolve(spec.format.kind, spec.format.formatVersion);
     const story = format.compile({spec, simulation, config: format.validate(spec.format)});
     const input = {workspaceRoot: process.cwd(), buildDirectoryRelative: 'output/test/build', spec, simulation, story};
@@ -65,6 +66,7 @@ describe('architecture and frozen artifacts', () => {
     expect(first.contentHash).toBe(second.contentHash);
     expect(verifyArtifactHash(first)).toBe(true);
     expect(first.composition).toEqual({id: 'CasinoReel', width: 540, height: 960, fps: 30, durationInFrames: 540});
+    expect(first.output.videoPath).toMatch(/video\/survive500-try1\.mp4$/);
     expect(first.assets).toHaveLength(19);
     expect(first.assets.every((asset) => asset.sha256.length === 64 && asset.provenance.allowedUsage.includes('internal'))).toBe(true);
   }, 120_000);

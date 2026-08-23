@@ -67,6 +67,23 @@
       }
     },
     {
+      "assetId": "best-run-elevenlabs",
+      "path": "public/assets/audio/best-run-elevenlabs.mp3",
+      "sha256": "44ec921ecf87f384fc50bb6dac05e4fea9c2588f88869b5bd62241fc96c77763",
+      "mediaType": "audio/mpeg",
+      "required": true,
+      "usage": "audio",
+      "provenance": {
+        "provenanceId": "elevenlabs-brian-v3-best-run-2026-08-22",
+        "sourceType": "generated",
+        "sourceUri": "https://elevenlabs.io/app/speech-synthesis/text-to-speech",
+        "author": "ElevenLabs • Brian voice • Eleven v3",
+        "license": "ElevenLabs Free plan; commercial use not cleared",
+        "allowedUsage": ["internal"],
+        "notes": "Generated from: [dramatic] Best run... biggest hit. Uses the same Brian voice and Eleven v3 settings as the opening narration. Upgrade/rights review required before public or commercial publication."
+      }
+    },
+    {
       "assetId": "music-bed-elevenlabs",
       "path": "public/assets/audio/music-bed-elevenlabs.mp4",
       "sha256": "718943a2a8150f226ef583a6192615c9590f1ec8fb2b3587d370e440500341fd",
@@ -329,35 +346,18 @@
     {
       "assetId": "host-presenter-01",
       "path": "public/assets/hosts/host-01.webm",
-      "sha256": "aed4d6a9ca616ad516ea2299c2b8f6495e47fc6cb6d20a54e2583a415cfd8b91",
+      "sha256": "376aaf16270c889dd096efb141e8db045a2bb10d3560645026ab459df432e893",
       "mediaType": "video/webm",
       "required": true,
       "usage": "render",
       "provenance": {
-        "provenanceId": "youtube-presenter-cutout-4aydvl6qr4-2026-08-22",
+        "provenanceId": "youtube-presenter-cutout-09-iequshz8-18s-2026-08-22",
         "sourceType": "reference-only",
-        "sourceUri": "https://www.youtube.com/watch?v=4aYDv_L6qR4",
+        "sourceUri": "https://www.youtube.com/watch?v=09_IeqUSHz8",
         "author": "Third-party YouTube upload",
         "license": "Rights not independently verified",
         "allowedUsage": ["internal"],
-        "notes": "User-requested short presenter overlay with the background removed. Clear appearance and source-video rights before public or commercial publication."
-      }
-    },
-    {
-      "assetId": "host-presenter-02",
-      "path": "public/assets/hosts/host-02.webm",
-      "sha256": "36f708de90ec03511efb79ef312f3341089b9646c13b2320e229d3ee8840d37e",
-      "mediaType": "video/webm",
-      "required": true,
-      "usage": "render",
-      "provenance": {
-        "provenanceId": "youtube-presenter-cutout-7hpk5pooilu-2026-08-22",
-        "sourceType": "reference-only",
-        "sourceUri": "https://www.youtube.com/watch?v=7HpK5pOoiLU",
-        "author": "Third-party YouTube upload",
-        "license": "Rights not independently verified",
-        "allowedUsage": ["internal"],
-        "notes": "User-requested short presenter overlay with the background removed. Clear appearance and source-video rights before public or commercial publication."
+        "notes": "Single continuous 18-second presenter take with the background removed. It replaces the broken short clip and is the only presenter asset used by this reel. Clear appearance and source-video rights before public or commercial publication."
       }
     }
   ]

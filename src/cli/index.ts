@@ -8,6 +8,9 @@ import {compilePipeline, finalizePipeline, loadPipelineContext, manifestPipeline
 import {runQa} from '../qa/qa-runner';
 import {renderContactSheet, renderPreviewStill, renderVideo} from '../render/runner';
 import {runDoctor} from './doctor';
+import {loadAuthorReelSpec} from '../contracts/reel-spec-loader';
+import {acceptRenderedVideo} from '../delivery/accepted-video';
+import {attemptNumberFor, nextAttemptNumber, parseAttemptNumber, simulationSeedForAttempt} from '../experiment/attempt';
 
 const program = new Command();
 program.name('reel').description('Deterministic vertical casino/game-show reel pipeline').version(PRODUCER_VERSION);
@@ -16,17 +19,39 @@ function print(value: unknown): void {
   process.stdout.write(`${JSON.stringify(value, null, 2)}\n`);
 }
 
-async function resolveContext(input: string, options: {profile?: string; seed?: string} = {}): Promise<PipelineContext> {
-  if (path.basename(input) === 'render-manifest.json' || path.basename(input) === 'simulation.json' || path.basename(input) === 'story-plan.json' || !input.endsWith('.json')) {
+interface ContextOptions {
+  profile?: string;
+  seed?: string;
+  try?: string;
+  nextTry?: boolean;
+}
+
+async function attemptOverride(input: string, options: ContextOptions): Promise<number | undefined> {
+  if (options.try && options.nextTry) throw new Error('Use either --try or --next-try, not both');
+  if (options.try) return parseAttemptNumber(options.try);
+  if (!options.nextTry) return undefined;
+  const basename = path.basename(input);
+  if (!input.endsWith('.json') || basename === 'render-manifest.json' || basename === 'simulation.json' || basename === 'story-plan.json' || basename === 'run-manifest.json') {
+    throw new Error('--next-try requires an author ReelSpec JSON');
+  }
+  const base = await loadAuthorReelSpec(input);
+  return nextAttemptNumber({workspaceRoot: process.cwd(), format: base.format.kind});
+}
+
+async function resolveContext(input: string, options: ContextOptions = {}): Promise<PipelineContext> {
+  if (path.basename(input) === 'render-manifest.json' || path.basename(input) === 'run-manifest.json' || path.basename(input) === 'simulation.json' || path.basename(input) === 'story-plan.json' || !input.endsWith('.json')) {
+    if (options.try || options.nextTry || options.seed) throw new Error('A frozen build cannot be overridden with --try, --next-try or --seed');
     return loadPipelineContext(input);
   }
+  const attempt = await attemptOverride(input, options);
   return preparePipeline(input, {
     ...(options.profile ? {profile: z.enum(['draft', 'final', 'public']).parse(options.profile)} : {}),
     ...(options.seed ? {seed: options.seed} : {}),
+    ...(attempt ? {attempt} : {}),
   });
 }
 
-async function fullyCompiled(input: string, options: {profile?: string; seed?: string} = {}): Promise<PipelineContext> {
+async function fullyCompiled(input: string, options: ContextOptions = {}): Promise<PipelineContext> {
   let context = await resolveContext(input, options);
   context = await simulatePipeline(context);
   context = await compilePipeline(context);
@@ -40,48 +65,60 @@ function renderData(context: PipelineContext) {
 
 program.command('validate')
   .argument('<spec>', 'author ReelSpec JSON')
-  .action(async (spec: string) => {
-    const context = await preparePipeline(spec);
-    print({status: 'passed', reelId: context.spec.reelId, format: context.spec.format.kind, contentHash: context.spec.contentHash, buildId: context.buildId, canonicalSpec: `${context.buildDirectoryRelative}/input/reel-spec.json`});
+  .option('--try <number>', 'set an explicit experiment attempt number')
+  .option('--next-try', 'allocate the next unused attempt number for this format')
+  .action(async (spec: string, options: ContextOptions) => {
+    const context = await resolveContext(spec, options);
+    print({status: 'passed', reelId: context.spec.reelId, format: context.spec.format.kind, attempt: attemptNumberFor(context.spec), contentHash: context.spec.contentHash, buildId: context.buildId, canonicalSpec: `${context.buildDirectoryRelative}/input/reel-spec.json`});
   });
 
 program.command('simulate')
   .argument('<spec>', 'author ReelSpec JSON')
   .option('--seed <seed>', 'override seed before canonicalization')
-  .action(async (spec: string, options: {seed?: string}) => {
-    const context = await simulatePipeline(await preparePipeline(spec, options.seed ? {seed: options.seed} : {}));
-    print({status: 'passed', buildId: context.buildId, contentHash: context.simulation!.contentHash, output: `${context.buildDirectoryRelative}/data/simulation.json`});
+  .option('--try <number>', 'set an explicit experiment attempt number')
+  .option('--next-try', 'allocate the next unused attempt number for this format')
+  .action(async (spec: string, options: ContextOptions) => {
+    const context = await simulatePipeline(await resolveContext(spec, options));
+    print({status: 'passed', buildId: context.buildId, attempt: attemptNumberFor(context.spec), simulationSeed: context.simulation!.model.seed, contentHash: context.simulation!.contentHash, output: `${context.buildDirectoryRelative}/data/simulation.json`});
   });
 
 program.command('compile')
   .argument('<input>', 'author ReelSpec, simulation.json or build directory')
-  .action(async (input: string) => {
-    let context = await resolveContext(input);
+  .option('--try <number>', 'set an explicit experiment attempt number')
+  .option('--next-try', 'allocate the next unused attempt number for this format')
+  .action(async (input: string, options: ContextOptions) => {
+    let context = await resolveContext(input, options);
     context = await compilePipeline(context);
-    print({status: 'passed', buildId: context.buildId, contentHash: context.story!.contentHash, output: `${context.buildDirectoryRelative}/data/story-plan.json`});
+    print({status: 'passed', buildId: context.buildId, attempt: attemptNumberFor(context.spec), contentHash: context.story!.contentHash, output: `${context.buildDirectoryRelative}/data/story-plan.json`});
   });
 
 program.command('preview')
   .argument('<input>', 'author ReelSpec or build')
-  .action(async (input: string) => {
-    const context = await fullyCompiled(input, {profile: 'draft'});
+  .option('--try <number>', 'set an explicit experiment attempt number')
+  .option('--next-try', 'allocate the next unused attempt number for this format')
+  .action(async (input: string, options: ContextOptions) => {
+    const context = await fullyCompiled(input, {...options, profile: 'draft'});
     const output = await renderPreviewStill(renderData(context));
-    print({status: 'passed', buildId: context.buildId, preview: path.relative(context.workspaceRoot, output)});
+    print({status: 'passed', buildId: context.buildId, attempt: attemptNumberFor(context.spec), preview: path.relative(context.workspaceRoot, output)});
   });
 
 program.command('contact-sheet')
   .argument('<input>', 'author ReelSpec, render-manifest.json or build directory')
   .option('--profile <profile>', 'draft, final or public')
-  .action(async (input: string, options: {profile?: string}) => {
+  .option('--try <number>', 'set an explicit experiment attempt number')
+  .option('--next-try', 'allocate the next unused attempt number for this format')
+  .action(async (input: string, options: ContextOptions) => {
     const context = await fullyCompiled(input, options);
     const output = await renderContactSheet(renderData(context));
-    print({status: 'passed', buildId: context.buildId, contactSheet: path.relative(context.workspaceRoot, output.contactSheet), frames: output.frames});
+    print({status: 'passed', buildId: context.buildId, attempt: attemptNumberFor(context.spec), contactSheet: path.relative(context.workspaceRoot, output.contactSheet), frames: output.frames});
   });
 
 program.command('render')
   .argument('<input>', 'author ReelSpec, render-manifest.json or build directory')
   .option('--profile <profile>', 'draft, final or public')
-  .action(async (input: string, options: {profile?: string}) => {
+  .option('--try <number>', 'set an explicit experiment attempt number')
+  .option('--next-try', 'allocate the next unused attempt number for this format')
+  .action(async (input: string, options: ContextOptions) => {
     if (path.basename(input) === 'render-manifest.json' && options.profile) throw new Error('--profile cannot override a frozen RenderManifest');
     const context = await fullyCompiled(input, options);
     const data = renderData(context);
@@ -96,8 +133,18 @@ program.command('render')
     }});
     const qa = await runQa(data);
     await finalizePipeline(context, qa.status);
-    print({status: qa.status, buildId: context.buildId, video: path.relative(context.workspaceRoot, video), contactSheet: context.renderManifest!.output.contactSheetPath, qa: context.renderManifest!.output.qaReportPath});
+    print({status: qa.status, buildId: context.buildId, attempt: attemptNumberFor(context.spec), simulationSeed: simulationSeedForAttempt(context.spec.game.seed, attemptNumberFor(context.spec)), video: path.relative(context.workspaceRoot, video), contactSheet: context.renderManifest!.output.contactSheetPath, qa: context.renderManifest!.output.qaReportPath});
     if (qa.status === 'failed') process.exitCode = 1;
+  });
+
+program.command('accept')
+  .description('copy a QA-passed final/public render into final-videos')
+  .argument('<input>', 'render-manifest.json or build directory')
+  .action(async (input: string) => {
+    const context = await loadPipelineContext(input);
+    if (!context.renderManifest) throw new Error('Build does not contain render-manifest.json');
+    const accepted = await acceptRenderedVideo({workspaceRoot: context.workspaceRoot, buildId: context.buildId, spec: context.spec, manifest: context.renderManifest});
+    print({status: accepted.status, format: context.spec.format.kind, attempt: attemptNumberFor(context.spec), video: path.relative(context.workspaceRoot, accepted.videoPath), receipt: path.relative(context.workspaceRoot, accepted.receiptPath), sha256: accepted.sha256});
   });
 
 const batchSchema = z.strictObject({schemaVersion: z.literal('reel-batch/1'), batchId: z.string(), specs: z.array(z.string()).min(1)});

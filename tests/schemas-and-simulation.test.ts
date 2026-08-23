@@ -4,12 +4,25 @@ import {FORMAT_KINDS} from '../src/contracts/reel-spec';
 import {loadAuthorReelSpec} from '../src/contracts/reel-spec-loader';
 import {verifyArtifactHash} from '../src/core/artifact';
 import {ApproxGameAdapter} from '../src/game/approximate/adapter';
+import {crazyTimeForecastV1Preset, resolveApproxGameConfig} from '../src/game/approximate/outcome-table';
 import {SeededPrng} from '../src/game/approximate/prng';
 import {createPackRegistry} from '../src/packs/registry';
+import {simulationSeedForSpec} from '../src/experiment/attempt';
 
 const fixturePaths = FORMAT_KINDS.map((kind) => path.resolve(`specs/examples/${kind}.json`));
 
 describe('contracts and approximate-v0', () => {
+  it('pins the Crazy Time forecast preset to one million weights and 0.9600 mean gross return', () => {
+    const table = crazyTimeForecastV1Preset.outcomeTable;
+    const totalWeight = table.reduce((sum, outcome) => sum + outcome.weight, 0);
+    const meanGrossBps = table.reduce((sum, outcome) => sum + outcome.weight * outcome.grossMultiplierBps, 0) / totalWeight;
+    const resolved = resolveApproxGameConfig({presetRef: {id: 'crazy-time-forecast-v1', version: '1.0.0'}});
+    expect(totalWeight).toBe(1_000_000);
+    expect(meanGrossBps).toBe(9_600);
+    expect(resolved.resolvedPreset).toMatchObject({id: 'crazy-time-forecast-v1', version: '1.0.0'});
+    expect(table.filter((outcome) => outcome.grossMultiplierBps >= 150_000_000).reduce((sum, outcome) => sum + outcome.weight, 0)).toBe(2);
+  });
+
   it('pins xoshiro128ss-v1 vectors', () => {
     const prng = new SeededPrng('golden-seed');
     expect(Array.from({length: 8}, () => prng.nextUint32())).toEqual([
@@ -30,6 +43,7 @@ describe('contracts and approximate-v0', () => {
     for (const fixturePath of fixturePaths) {
       const spec = await loadAuthorReelSpec(fixturePath);
       expect(verifyArtifactHash(spec)).toBe(true);
+      expect(spec.experiment.attempt).toBe(1);
       expect(registry.resolveLayout(spec.packs.layout.id, spec.packs.layout.version).id).toBe('vertical-show');
       expect(registry.resolveTheme(spec.packs.theme.id, spec.packs.theme.version).validate()).toEqual([]);
       expect(registry.resolveMotionAudio(spec.packs.motionAudio.id, spec.packs.motionAudio.version).id).toBe('tension-show');
@@ -43,8 +57,8 @@ describe('contracts and approximate-v0', () => {
     for (const fixturePath of fixturePaths) {
       const spec = await loadAuthorReelSpec(fixturePath);
       const config = adapter.validateConfig(spec.game.config);
-      const first = await adapter.simulate({spec, config});
-      const second = await adapter.simulate({spec, config});
+      const first = await adapter.simulate({spec, config, simulationSeed: simulationSeedForSpec(spec)});
+      const second = await adapter.simulate({spec, config, simulationSeed: simulationSeedForSpec(spec)});
       expect(first.contentHash, spec.format.kind).toBe(second.contentHash);
       expect(first.invariants.failures).toBe(0);
       expect(first.model.modelVersion).toBe('approximate-v0');

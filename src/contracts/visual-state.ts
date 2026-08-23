@@ -39,8 +39,15 @@ export interface SurvivalExperienceState {
   finalSurvivedCount: number;
   finalBustedCount: number;
   finalBands: Array<{label: string; count: number}>;
-  selectedFinalBankrollMinor: number;
-  bestFinalOutcomeLabel: string;
+  selectedFinalBankrollMinor?: number;
+  bestFinalOutcomeLabel?: string;
+  resultCategories?: Array<{
+    id: 'rare-lucky' | 'very-lucky' | 'best-of-population';
+    label: string;
+    rangeLabel: string;
+    count?: number;
+    amountMinor?: number;
+  }>;
 }
 
 export interface FinalResultState {

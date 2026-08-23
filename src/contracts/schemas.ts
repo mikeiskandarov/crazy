@@ -108,6 +108,9 @@ export const authorReelSpecSchema = z.strictObject({
   reelId: id,
   locale: z.enum(['en-US', 'ru-RU']),
   currency: z.literal('USD'),
+  experiment: z.strictObject({
+    attempt: z.number().int().positive().max(1_000_000),
+  }).optional().default({attempt: 1}),
   format: formatConfig,
   game: z.strictObject({
     adapterId: id,

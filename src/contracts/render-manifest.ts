@@ -60,6 +60,8 @@ export interface RunManifest {
   versions: Record<string, string>;
   formatKind: string;
   themeId: string;
+  attempt: number;
+  baseSeed: string;
   seed: string;
   simulationModel: string;
   hashes: Partial<Record<'spec' | 'simulation' | 'story' | 'render', ContentHash>>;

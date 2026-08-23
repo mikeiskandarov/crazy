@@ -6,6 +6,8 @@ import {carnivalNightTokens as tokens} from '../../theme/carnival-night/tokens';
 export const StageBackdrop: React.FC<{state: VisualState}> = ({state}) => {
   const danger = state.beatKind === 'threat';
   const result = state.beatKind === 'reveal' || state.beatKind === 'outro';
+  const backgroundProgress = Math.max(0, Math.min(1, state.frame / 539));
+  const backgroundScale = 1.035 + backgroundProgress * .095;
   const style: CSSProperties = {
     position: 'absolute',
     inset: 0,
@@ -15,12 +17,12 @@ export const StageBackdrop: React.FC<{state: VisualState}> = ({state}) => {
   return <div style={style}>
     <img
       src={staticFile('assets/backgrounds/crazy-time-wonderland-v1.png')}
-      style={{position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.08)', filter: 'saturate(1.06) contrast(1.04) brightness(.76)'}}
+      style={{position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: .72, transform: `scale(${backgroundScale})`, transformOrigin: '50% 48%', filter: 'saturate(1.04) contrast(1.02) brightness(.9)', willChange: 'transform'}}
     />
     <div style={{position: 'absolute', inset: 0, background: `linear-gradient(${danger ? 'rgba(91,16,26,.30)' : result ? 'rgba(61,32,16,.20)' : 'rgba(32,8,37,.12)'}, ${danger ? 'rgba(40,2,10,.40)' : 'rgba(6,3,12,.26)'})`, mixBlendMode: 'multiply'}} />
-    <div style={{position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 43%, rgba(19,4,25,.08) 0%, rgba(12,3,17,.26) 42%, rgba(2,1,5,.82) 100%)'}} />
-    <div style={{position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(2,1,5,.66), transparent 18%, transparent 82%, rgba(2,1,5,.68))'}} />
-    <div style={{position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(2,1,5,.30), transparent 18%, transparent 72%, rgba(2,1,5,.72))'}} />
+    <div style={{position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 43%, rgba(19,4,25,.05) 0%, rgba(12,3,17,.16) 42%, rgba(2,1,5,.64) 100%)'}} />
+    <div style={{position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(2,1,5,.48), transparent 18%, transparent 82%, rgba(2,1,5,.50))'}} />
+    <div style={{position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(2,1,5,.18), transparent 18%, transparent 72%, rgba(2,1,5,.54))'}} />
     <div style={{position: 'absolute', left: 120, right: 120, bottom: 100, height: 450, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(247,181,26,.13), rgba(7,6,11,0) 67%)'}} />
     <div style={{position: 'absolute', inset: 0, opacity: .08, backgroundImage: 'repeating-radial-gradient(circle at 30% 20%, #fff 0 .8px, transparent 1px 4px)', mixBlendMode: 'soft-light'}} />
   </div>;

@@ -12,6 +12,7 @@ import {createGameAdapterRegistry} from '../game/registry';
 import {createPackRegistry} from '../packs/registry';
 import {buildRenderManifest} from '../render/manifest-builder';
 import {createFormatRegistry} from '../story/format-registry';
+import {attemptNumberFor, simulationSeedForAttempt} from '../experiment/attempt';
 
 export interface PipelineContext {
   workspaceRoot: string;
@@ -61,7 +62,9 @@ function runManifestFor(context: PipelineContext, status: RunManifest['status'])
     },
     formatKind: context.spec.format.kind,
     themeId: context.spec.packs.theme.id,
-    seed: context.spec.game.seed,
+    attempt: attemptNumberFor(context.spec),
+    baseSeed: context.spec.game.seed,
+    seed: simulationSeedForAttempt(context.spec.game.seed, attemptNumberFor(context.spec)),
     simulationModel: context.spec.game.requestedModelVersion,
     hashes: {
       spec: context.spec.contentHash,
@@ -157,7 +160,7 @@ export async function simulatePipeline(context: PipelineContext): Promise<Pipeli
   } else {
     const adapter = createGameAdapterRegistry().resolve(context.spec.game.adapterId);
     const config = adapter.validateConfig(context.spec.game.config);
-    simulation = await adapter.simulate({spec: context.spec, config});
+    simulation = await adapter.simulate({spec: context.spec, config, simulationSeed: simulationSeedForAttempt(context.spec.game.seed, attemptNumberFor(context.spec))});
     await writeJsonStable(target, simulation);
   }
   const next = {...context, simulation};

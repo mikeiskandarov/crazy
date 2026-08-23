@@ -17,7 +17,7 @@ function primaryBetAndStrategy(format: DeepReadonly<FormatConfigV1>): {betMinor:
   return {betMinor: format.betMinor, strategy: format.strategy};
 }
 
-function simulateSingle(input: {spec: DeepReadonly<ReelSpecV1>; config: DeepReadonly<ApproxGameConfig>}): {
+function simulateSingle(input: {spec: DeepReadonly<ReelSpecV1>; config: DeepReadonly<ApproxGameConfig>; simulationSeed: string}): {
   streams: OutcomeStream[];
   runs: ParticipantRun[];
   populationSize: number;
@@ -27,7 +27,7 @@ function simulateSingle(input: {spec: DeepReadonly<ReelSpecV1>; config: DeepRead
   const format = input.spec.format;
   const {betMinor, strategy} = primaryBetAndStrategy(format);
   const stream = generateOutcomeStream({
-    seed: deriveSeed(input.spec.game.seed, 'single-run'),
+    seed: deriveSeed(input.simulationSeed, 'single-run'),
     rounds: format.roundCount,
     streamId: 'stream-featured',
     config: input.config,
@@ -57,7 +57,7 @@ function simulateSingle(input: {spec: DeepReadonly<ReelSpecV1>; config: DeepRead
   };
 }
 
-function simulateDuel(input: {spec: DeepReadonly<ReelSpecV1>; config: DeepReadonly<ApproxGameConfig>}): {
+function simulateDuel(input: {spec: DeepReadonly<ReelSpecV1>; config: DeepReadonly<ApproxGameConfig>; simulationSeed: string}): {
   streams: OutcomeStream[];
   runs: ParticipantRun[];
   populationSize: number;
@@ -65,13 +65,13 @@ function simulateDuel(input: {spec: DeepReadonly<ReelSpecV1>; config: DeepReadon
 } {
   const format = input.spec.format;
   if (format.kind !== 'one-vs-ten') throw new Error('simulateDuel requires one-vs-ten config');
-  const stream = generateOutcomeStream({seed: deriveSeed(input.spec.game.seed, 'shared-duel'), rounds: format.roundCount, streamId: 'stream-shared-duel', config: input.config});
+  const stream = generateOutcomeStream({seed: deriveSeed(input.simulationSeed, 'shared-duel'), rounds: format.roundCount, streamId: 'stream-shared-duel', config: input.config});
   const left = settleRun({participantId: 'duel-left', label: format.left.label, stream, strategyRef: format.left.strategy, startBankrollMinor: format.startBankrollMinor, baseBetMinor: format.left.betMinor, minimumStakeMinor: input.config.minimumStakeMinor, allowFinalAllIn: input.config.allowFinalAllIn});
   const right = settleRun({participantId: 'duel-right', label: format.right.label, stream, strategyRef: format.right.strategy, startBankrollMinor: format.startBankrollMinor, baseBetMinor: format.right.betMinor, minimumStakeMinor: input.config.minimumStakeMinor, allowFinalAllIn: input.config.allowFinalAllIn});
   return {streams: [stream], runs: [left.run, right.run], populationSize: 2, shared: true};
 }
 
-function simulateRace(input: {spec: DeepReadonly<ReelSpecV1>; config: DeepReadonly<ApproxGameConfig>}): {
+function simulateRace(input: {spec: DeepReadonly<ReelSpecV1>; config: DeepReadonly<ApproxGameConfig>; simulationSeed: string}): {
   streams: OutcomeStream[];
   runs: ParticipantRun[];
   populationSize: number;
@@ -80,8 +80,8 @@ function simulateRace(input: {spec: DeepReadonly<ReelSpecV1>; config: DeepReadon
   const format = input.spec.format;
   if (format.kind !== 'race-to-1000') throw new Error('simulateRace requires race-to-1000 config');
   const streams = format.sharedOutcomeStream
-    ? [generateOutcomeStream({seed: deriveSeed(input.spec.game.seed, 'shared-race'), rounds: format.roundCount, streamId: 'stream-shared-race', config: input.config})]
-    : format.racers.map((racer) => generateOutcomeStream({seed: deriveSeed(input.spec.game.seed, `race:${racer.racerId}`), rounds: format.roundCount, streamId: `stream-${racer.racerId}`, config: input.config}));
+    ? [generateOutcomeStream({seed: deriveSeed(input.simulationSeed, 'shared-race'), rounds: format.roundCount, streamId: 'stream-shared-race', config: input.config})]
+    : format.racers.map((racer) => generateOutcomeStream({seed: deriveSeed(input.simulationSeed, `race:${racer.racerId}`), rounds: format.roundCount, streamId: `stream-${racer.racerId}`, config: input.config}));
   const runs = format.racers.map((racer, index) => settleRun({
     participantId: racer.racerId,
     label: racer.label,
@@ -106,16 +106,18 @@ export class ApproxGameAdapter implements GameAdapter<ApproxGameConfig> {
     return resolveApproxGameConfig(input);
   }
 
-  describeAssumptions(_config: DeepReadonly<ApproxGameConfig>): ModelAssumption[] {
+  describeAssumptions(config: DeepReadonly<ApproxGameConfig>): ModelAssumption[] {
+    const isCrazyTimeForecast = config.resolvedPreset?.id === 'crazy-time-forecast-v1';
     return [
       {id: 'synthetic-weights', label: 'Synthetic outcome weights', detail: 'Configured weights are illustrative and are not published odds for a commercial game.', material: true},
       {id: 'flat-rounds', label: 'Independent discrete rounds', detail: 'Each outcome is sampled independently from the configured weighted table.', material: true},
       {id: 'integer-money', label: 'Integer money math', detail: 'All bankroll and payout calculations use cents and half-away-from-zero rounding.', material: true},
-      {id: 'no-bonus-state', label: 'No persistent bonus state', detail: 'Features settle as configured multipliers without a separate bonus game.', material: true},
+      {id: 'collapsed-bonus-state', label: 'Collapsed complete-round settlement', detail: isCrazyTimeForecast ? 'The Crazy Time main wheel, Top Slot and any bonus are collapsed into one synthetic gross-return bucket for each $1 editorial unit bet.' : 'Features settle as configured multipliers without a separate bonus game.', material: true},
+      ...(isCrazyTimeForecast ? [{id: 'forecast-calibration', label: 'Crazy Time editorial forecast', detail: 'The preset targets 0.9600 mean gross return and an illustrative best-of-1,000 tail; it is informed by public game rules but is not verified game math.', material: true}] : []),
     ];
   }
 
-  async simulate({spec, config, signal}: {spec: DeepReadonly<ReelSpecV1>; config: DeepReadonly<ApproxGameConfig>; signal?: AbortSignal}): Promise<DeepReadonly<SimulationResultV1>> {
+  async simulate({spec, config, simulationSeed, signal}: {spec: DeepReadonly<ReelSpecV1>; config: DeepReadonly<ApproxGameConfig>; simulationSeed: string; signal?: AbortSignal}): Promise<DeepReadonly<SimulationResultV1>> {
     if (spec.game.adapterId !== this.id || spec.game.requestedModelVersion !== config.modelVersion) {
       throw new Error(`Adapter compatibility error: requested ${spec.game.adapterId}/${spec.game.requestedModelVersion}`);
     }
@@ -136,7 +138,7 @@ export class ApproxGameAdapter implements GameAdapter<ApproxGameConfig> {
             ? populationSelectionFor({kind: 'impossible', targetMinor: format.targetMinor})
             : populationSelectionFor({kind: 'last-man'});
       const batch = simulatePopulation({
-        rootSeed: spec.game.seed,
+        rootSeed: simulationSeed,
         populationId: `population-${spec.reelId}`,
         populationSize: format.populationSize,
         roundCount: format.roundCount,
@@ -157,11 +159,11 @@ export class ApproxGameAdapter implements GameAdapter<ApproxGameConfig> {
       populationSize = format.populationSize;
       shared = false;
     } else if (format.kind === 'one-vs-ten') {
-      ({streams, runs, populationSize, shared} = simulateDuel({spec, config}));
+      ({streams, runs, populationSize, shared} = simulateDuel({spec, config, simulationSeed}));
     } else if (format.kind === 'race-to-1000') {
-      ({streams, runs, populationSize, shared} = simulateRace({spec, config}));
+      ({streams, runs, populationSize, shared} = simulateRace({spec, config, simulationSeed}));
     } else {
-      const single = simulateSingle({spec, config});
+      const single = simulateSingle({spec, config, simulationSeed});
       ({streams, runs, populationSize, shared, selectionAudit} = single);
     }
 
@@ -176,7 +178,7 @@ export class ApproxGameAdapter implements GameAdapter<ApproxGameConfig> {
         modelVersion: config.modelVersion,
         modelLabel: this.modelLabel,
         configHash: contentHash(config),
-        seed: spec.game.seed,
+        seed: simulationSeed,
         assumptions: this.describeAssumptions(config),
       },
       run: {roundCount: format.roundCount, populationSize, sharedOutcomeStream: shared},

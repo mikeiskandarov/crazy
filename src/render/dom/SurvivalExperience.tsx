@@ -26,25 +26,33 @@ const FinalSpinReveal: React.FC<{state: VisualState; spec: ReelSpecV1}> = ({stat
 
   const localFrame = state.frame - result.revealStartFrame;
   const enter = easeOutCubic(localFrame / 15);
-  const count = easeOutCubic((localFrame - 2) / 23);
-  const countStepMinor = experience.selectedFinalBankrollMinor % 100 === 0 ? 100 : 1;
-  const displayedBankrollMinor = Math.round(experience.selectedFinalBankrollMinor * count / countStepMinor) * countStepMinor;
-  const multiplier = experience.bestFinalOutcomeLabel.replace(/x$/i, '×');
-  const label = 'BEST RUN · BIGGEST HIT';
-  const visibleCharacters = Math.max(0, Math.min(label.length, Math.floor((localFrame - 9) / 1.35)));
+  const categories = experience.resultCategories ?? [];
 
-  return <div style={{position: 'absolute', left: 40, top: 500, width: 1000, height: 380, zIndex: 92, pointerEvents: 'none', textAlign: 'center'}}>
-    <div style={{position: 'absolute', left: 0, top: 16, width: '100%', opacity: enter, transform: `translateY(${(1 - enter) * 150}px) scale(${.7 + enter * .3})`, transformOrigin: '50% 65%'}}>
-      <div style={{display: 'flex', alignItems: 'baseline', justifyContent: 'center', whiteSpace: 'nowrap', fontFamily: tokens.typography.impact, lineHeight: .9, letterSpacing: -7, fontVariantNumeric: 'tabular-nums', filter: `drop-shadow(0 ${14 + (1 - enter) * 10}px 18px rgba(0,0,0,.9))`}}>
-        <span style={{fontSize: 142, color: '#FFF8D8', WebkitTextStroke: '7px #7A2B0D', paintOrder: 'stroke fill', textShadow: '0 4px 0 #F7B51A, 0 9px 0 #B15B0C, 0 16px 0 #4A1707, 0 25px 30px rgba(0,0,0,.82)'}}>{formatMoney(displayedBankrollMinor, spec.locale)}</span>
-        <span style={{fontSize: 112, color: tokens.color.positive, marginLeft: 24, letterSpacing: -5, WebkitTextStroke: '6px #123C1D', paintOrder: 'stroke fill', textShadow: '0 4px 0 #8BFF9C, 0 9px 0 #16752A, 0 16px 0 #092A10, 0 22px 28px rgba(0,0,0,.82)'}}>· {multiplier}</span>
-      </div>
-      <div style={{height: 62, marginTop: 30, overflow: 'hidden', fontFamily: tokens.typography.condensed, fontSize: 43, lineHeight: '56px', letterSpacing: 7, color: tokens.color.champagne, WebkitTextStroke: '2px #4A1707', paintOrder: 'stroke fill', textShadow: '0 4px 0 #160705, 0 9px 18px rgba(0,0,0,.92)'}}>
-        <span style={{position: 'relative', display: 'inline-block', opacity: visibleCharacters === 0 ? 0 : 1}}>
-          <span style={{display: 'inline-block', clipPath: `inset(0 ${100 - visibleCharacters / label.length * 100}% 0 0)`}}>{label}</span>
-          {visibleCharacters > 0 && visibleCharacters < label.length ? <span style={{position: 'absolute', left: `${visibleCharacters / label.length * 100}%`, top: 8, width: 4, height: 39, marginLeft: 2, background: tokens.color.champagne, boxShadow: `0 0 12px ${tokens.color.champagne}`}} /> : null}
-        </span>
-      </div>
+  return <div style={{position: 'absolute', left: 40, top: 445, width: 1000, height: 510, zIndex: 92, pointerEvents: 'none', textAlign: 'center', opacity: enter, transform: `translateY(${(1 - enter) * 70}px) scale(${.92 + enter * .08})`}}>
+    <div style={{display: 'inline-block', padding: '12px 28px 14px', borderRadius: 18, border: `2px solid ${tokens.color.gold}88`, background: 'rgba(18,8,27,.88)', boxShadow: '0 10px 24px rgba(0,0,0,.72)', fontFamily: tokens.typography.condensed, fontSize: 31, letterSpacing: 6.5, color: tokens.color.champagne, textShadow: '0 5px 16px rgba(0,0,0,.9)'}}>RESULT TIERS • 1,000 RUNS</div>
+    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.18fr', gap: 14, marginTop: 24}}>
+      {categories.map((category, index) => {
+        const progress = easeOutCubic((localFrame - 4 - index * 5) / 14);
+        const isBest = category.id === 'best-of-population';
+        const accent = isBest ? tokens.color.champagne : index === 1 ? tokens.color.positive : tokens.color.accentViolet;
+        const winnings = category.amountMinor !== undefined ? formatMoney(category.amountMinor, spec.locale) : category.rangeLabel;
+        const detail = category.amountMinor !== undefined ? category.rangeLabel : `${category.count ?? 0} RUNS IN TIER`;
+        const biggestHit = experience.bestFinalOutcomeLabel?.replace(/x$/i, '×') ?? '—';
+        return <div key={category.id} style={{height: 322, padding: isBest ? '22px 16px' : '27px 16px 22px', borderRadius: 24, border: `3px solid ${accent}`, background: 'linear-gradient(180deg, rgba(45,18,56,.97), rgba(18,10,29,.98))', boxShadow: `0 12px 30px rgba(0,0,0,.72), inset 0 1px rgba(255,255,255,.13), 0 0 24px ${accent}33`, opacity: progress, transform: `translateY(${(1 - progress) * 48}px) scale(${.9 + progress * .1})`}}>
+          {isBest ? <>
+            <div style={{fontFamily: tokens.typography.condensed, fontSize: 22, letterSpacing: 3.2, color: tokens.color.textSecondary}}>BEST FINAL</div>
+            <div style={{fontFamily: tokens.typography.impact, fontSize: 55, lineHeight: 1, marginTop: 5, color: tokens.color.champagne, fontVariantNumeric: 'tabular-nums', textShadow: '0 5px 0 #4A1707, 0 12px 25px rgba(0,0,0,.86)'}}>{winnings}</div>
+            <div style={{height: 2, margin: '20px 22px 17px', background: `linear-gradient(90deg, transparent, ${accent}, transparent)`}} />
+            <div style={{fontFamily: tokens.typography.condensed, fontSize: 22, letterSpacing: 3.2, color: tokens.color.textSecondary}}>BIGGEST HIT</div>
+            <div style={{fontFamily: tokens.typography.impact, fontSize: 52, lineHeight: 1, marginTop: 5, color: tokens.color.positive, textShadow: '0 5px 0 #10331E, 0 12px 25px rgba(0,0,0,.86)'}}>{biggestHit}</div>
+          </> : <>
+            <div style={{fontFamily: tokens.typography.impact, fontSize: 43, lineHeight: .98, minHeight: 78, display: 'flex', alignItems: 'center', justifyContent: 'center', letterSpacing: -1.2, color: '#FFF8D8', fontVariantNumeric: 'tabular-nums', textShadow: '0 5px 0 #4A1707, 0 12px 25px rgba(0,0,0,.86)'}}>{winnings}</div>
+            <div style={{fontFamily: tokens.typography.condensed, fontSize: 24, lineHeight: 1.1, minHeight: 50, marginTop: 18, letterSpacing: 1.5, color: tokens.color.textSecondary}}>{detail}</div>
+            <div style={{height: 2, margin: '18px 18px 20px', background: `linear-gradient(90deg, transparent, ${accent}, transparent)`}} />
+            <div style={{fontFamily: tokens.typography.condensed, fontSize: 27, lineHeight: 1, letterSpacing: 3.2, color: accent}}>{category.label}</div>
+          </>}
+        </div>;
+      })}
     </div>
   </div>;
 };
@@ -53,6 +61,8 @@ export const SurvivalExperience: React.FC<{state: VisualState; spec: ReelSpecV1}
   const experience = state.survivalExperience;
   if (!experience || spec.format.kind !== 'survive-500' || experience.phase === 'hook') return null;
   const finalBustCount = experience.finalBustedCount;
+  const bestFinalDisplay = experience.selectedFinalBankrollMinor === undefined ? '—' : formatMoney(experience.selectedFinalBankrollMinor, spec.locale);
+  const biggestHitDisplay = experience.bestFinalOutcomeLabel?.replace(/x$/i, '×') ?? '—';
 
   if (experience.phase === 'batch') {
     const bustMask = distributedCellMask({cellCount: experience.populationSize, markedCount: finalBustCount});
@@ -79,11 +89,12 @@ export const SurvivalExperience: React.FC<{state: VisualState; spec: ReelSpecV1}
   }
 
   if (experience.phase === 'distribution' || experience.phase === 'verdict' || experience.phase === 'result') {
-    const verdict = experience.phase === 'verdict' || experience.phase === 'result';
-    const chartProgress = verdict ? 1 : experience.phaseProgress;
+    const settled = experience.phase === 'verdict' || experience.phase === 'result';
+    const revealed = experience.phase === 'result';
+    const chartProgress = settled ? 1 : experience.phaseProgress;
     const max = Math.max(1, ...experience.finalBands.map((band) => band.count));
     return <>
-      <PanelShell accent={verdict ? tokens.color.gold : tokens.color.accentViolet} style={{position: 'absolute', left: 40, top: 1070, width: 1000, height: 560, zIndex: 72, padding: '28px 42px'}}>
+      <PanelShell accent={settled ? tokens.color.gold : tokens.color.accentViolet} style={{position: 'absolute', left: 40, top: 1070, width: 1000, height: 560, zIndex: 72, padding: '28px 42px'}}>
         <PhaseLabel>FINAL BANKROLL DISTRIBUTION</PhaseLabel>
         <div style={{marginTop: 14}}>{experience.finalBands.map((band, index) => {
           const selected = index === experience.finalBands.length - 1;
@@ -102,9 +113,14 @@ export const SurvivalExperience: React.FC<{state: VisualState; spec: ReelSpecV1}
             <div style={{fontSize: 21, color: tokens.color.textSecondary}}>{(experience.finalSurvivedCount / experience.populationSize * 100).toFixed(1)}% SURVIVAL RATE</div>
           </div>
           <div>
-            <div style={{fontSize: 23, letterSpacing: 2.4, color: tokens.color.textSecondary}}>{verdict ? 'BEST FINAL' : 'SEARCHING BEST RUN'}</div>
-            <div style={{fontSize: 56, lineHeight: 1, color: tokens.color.champagne}}>{verdict ? <>{formatMoney(experience.selectedFinalBankrollMinor, spec.locale)} <span style={{color: tokens.color.positive}}>· {experience.bestFinalOutcomeLabel.replace(/x$/i, '×')}</span></> : <span style={{color: tokens.color.accentViolet}}>SCANNING…</span>}</div>
-            <div style={{fontSize: 21, color: tokens.color.textSecondary}}>{verdict ? `HIGHEST FINAL • BIGGEST HIT` : 'RANKING ALL FINAL BANKROLLS'}</div>
+            {revealed ? <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14}}>
+              <div><div style={{fontSize: 21, letterSpacing: 2.2, color: tokens.color.textSecondary}}>BEST FINAL</div><div style={{fontSize: 49, lineHeight: 1.04, color: tokens.color.champagne}}>{bestFinalDisplay}</div></div>
+              <div><div style={{fontSize: 21, letterSpacing: 2.2, color: tokens.color.textSecondary}}>BIGGEST HIT</div><div style={{fontSize: 49, lineHeight: 1.04, color: tokens.color.positive}}>{biggestHitDisplay}</div></div>
+            </div> : <>
+              <div style={{fontSize: 23, letterSpacing: 2.4, color: tokens.color.textSecondary}}>{settled ? 'THREE RESULT TIERS' : 'SEARCHING BEST RUN'}</div>
+              <div style={{fontSize: 56, lineHeight: 1, color: tokens.color.champagne}}>{settled ? <span style={{color: tokens.color.warning}}>LOCKED</span> : <span style={{color: tokens.color.accentViolet}}>SCANNING…</span>}</div>
+              <div style={{fontSize: 21, color: tokens.color.textSecondary}}>{settled ? 'RARE • VERY LUCKY • BEST' : 'RANKING ALL FINAL BANKROLLS'}</div>
+            </>}
           </div>
           <div />
         </div>

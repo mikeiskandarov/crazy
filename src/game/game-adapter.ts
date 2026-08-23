@@ -10,6 +10,7 @@ export interface GameAdapter<TConfig = unknown> {
   simulate(input: {
     spec: DeepReadonly<ReelSpecV1>;
     config: DeepReadonly<TConfig>;
+    simulationSeed: string;
     signal?: AbortSignal;
   }): Promise<DeepReadonly<SimulationResultV1>>;
   describeAssumptions(config: DeepReadonly<TConfig>): ModelAssumption[];

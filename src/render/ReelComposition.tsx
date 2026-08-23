@@ -10,6 +10,7 @@ import {AudioBus} from './audio/AudioBus';
 import {carnivalNightTokens as tokens} from '../theme/carnival-night/tokens';
 import {WinMathLogo} from './dom/Branding';
 import {HostOverlay} from './dom/HostOverlay';
+import {AttemptBadge} from './dom/AttemptBadge';
 
 const FontFaces: React.FC = () => <style>{`
   @font-face { font-family: 'Archivo Black'; src: url('${staticFile('assets/fonts/archivo-black-latin-400-normal.woff2')}') format('woff2'); font-style: normal; font-weight: 400; font-display: block; }
@@ -36,6 +37,7 @@ export const ReelComposition: React.FC<RenderRootProps> = ({payload}) => {
       <StageBackdrop state={state} />
       <PixiStage state={state} />
       <MarqueeFrame frame={frame} />
+      <AttemptBadge spec={payload.spec} />
       <WinMathLogo state={state} />
       <ImpactTitle state={state} spec={payload.spec} />
       <TopOutcome state={state} />

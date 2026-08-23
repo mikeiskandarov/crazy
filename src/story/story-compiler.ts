@@ -228,8 +228,9 @@ export function compileStoryPlan(input: {
     ? [191, 198, 206, 215, 225, 236, 248, 260, 269].map((startFrame, index) => ({cueId: `audio-batch-tick-${index}`, assetId: index % 3 === 2 ? 'wheel-tick' : 'ui-tick', startFrame, role: 'ui', gainMilli: 580 + index * 18}))
     : [];
   const audio: AudioCue[] = isSurvivalExperience ? [
-    {cueId: 'audio-music', assetId: 'music-bed-elevenlabs', startFrame: 0, endFrameExclusive: duration, role: 'music', gainMilli: 650, duckGroup: 'music'},
+    {cueId: 'audio-music', assetId: 'music-bed-elevenlabs', startFrame: 0, endFrameExclusive: duration, role: 'music', gainMilli: 720, duckGroup: 'music'},
     {cueId: 'audio-voice-hook', assetId: 'hook-question-elevenlabs', startFrame: 4, endFrameExclusive: 190, role: 'voice', gainMilli: 920, duckGroup: 'voice'},
+    {cueId: 'audio-voice-best-run', assetId: 'best-run-elevenlabs', startFrame: 456, endFrameExclusive: 524, role: 'voice', gainMilli: 800, duckGroup: 'voice'},
     {cueId: 'audio-hook', assetId: 'hook-impact', startFrame: 0, role: 'impact', gainMilli: 680},
     {cueId: 'audio-ui', assetId: 'ui-tick', startFrame: 190, role: 'ui', gainMilli: 620},
     ...batchTicks,
@@ -238,9 +239,9 @@ export function compileStoryPlan(input: {
     {cueId: 'audio-best-final-win', assetId: 'celebration', startFrame: 345, role: 'impact', gainMilli: 920},
     {cueId: 'audio-riser', assetId: 'riser', startFrame: 394, role: 'ambience', gainMilli: 520, duckGroup: 'music'},
     ...survivalTicks,
-    {cueId: 'audio-reveal', assetId: 'reveal-impact', startFrame: revealStart, role: 'impact', gainMilli: 900, duckGroup: 'music'},
-    {cueId: 'audio-result', assetId: 'result-resolve', startFrame: revealStart + 7, role: 'ambience', gainMilli: 620},
-    {cueId: 'audio-celebration', assetId: 'celebration', startFrame: revealStart + 10, role: 'ambience', gainMilli: 760},
+    {cueId: 'audio-reveal', assetId: 'reveal-impact', startFrame: revealStart, role: 'impact', gainMilli: 650, duckGroup: 'music'},
+    {cueId: 'audio-result', assetId: 'result-resolve', startFrame: revealStart + 70, role: 'ambience', gainMilli: 350},
+    {cueId: 'audio-celebration', assetId: 'celebration', startFrame: revealStart + 70, role: 'ambience', gainMilli: 420},
   ] : [
     {cueId: 'audio-music', assetId: 'music-bed', startFrame: 0, endFrameExclusive: duration, role: 'music', gainMilli: 260, duckGroup: 'music'},
     {cueId: 'audio-hook', assetId: 'hook-impact', startFrame: 0, role: 'impact', gainMilli: 700},

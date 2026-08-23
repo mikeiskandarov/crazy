@@ -7,6 +7,7 @@ import type {StoryPlanV1} from '../contracts/story-plan';
 import {buildArtifact} from '../core/artifact';
 import {resolveAssets} from '../assets/asset-resolver';
 import {createPackRegistry} from '../packs/registry';
+import {attemptNumberFor, attemptVideoFileName} from '../experiment/attempt';
 
 function artifactRef(artifact: {artifactId: string; contentHash: string; schemaVersion: string}, artifactPath: string): ArtifactRef {
   return {artifactId: artifact.artifactId, path: artifactPath, contentHash: artifact.contentHash, schemaVersion: artifact.schemaVersion};
@@ -27,7 +28,7 @@ export async function buildRenderManifest(input: {
   const width = profile === 'draft' ? 540 : 1080;
   const height = profile === 'draft' ? 960 : 1920;
   const root = input.buildDirectoryRelative;
-  const videoName = profile === 'draft' ? 'draft.mp4' : 'final.mp4';
+  const videoName = attemptVideoFileName(input.spec.format.kind, attemptNumberFor(input.spec));
   return buildArtifact<RenderManifestV1>({
     artifactId: `render-${input.spec.reelId}-${profile}`,
     schemaVersion: 'render-manifest/1',

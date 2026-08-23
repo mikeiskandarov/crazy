@@ -112,6 +112,9 @@ export interface AuthorReelSpecV1 {
   reelId: string;
   locale: 'en-US' | 'ru-RU';
   currency: 'USD';
+  experiment: {
+    attempt: number;
+  };
   format: FormatConfigV1;
   game: {
     adapterId: string;

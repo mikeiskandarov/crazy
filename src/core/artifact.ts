@@ -3,7 +3,7 @@ import {artifactContentHash} from './canonical-json';
 import {deepFreeze} from './freeze-artifact';
 
 export const PRODUCER = 'casino-reel-builder';
-export const PRODUCER_VERSION = '0.1.1';
+export const PRODUCER_VERSION = '0.1.2';
 
 export function buildArtifact<T extends ArtifactEnvelope>(input: {
   artifactId: string;

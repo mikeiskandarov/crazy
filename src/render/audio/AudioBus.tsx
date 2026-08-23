@@ -6,6 +6,7 @@ const audioFiles: Record<string, string> = {
   'music-bed': 'assets/audio/music-bed.wav',
   'music-bed-elevenlabs': 'assets/audio/music-bed-elevenlabs.mp4',
   'hook-question-elevenlabs': 'assets/audio/hook-question-elevenlabs.mp3',
+  'best-run-elevenlabs': 'assets/audio/best-run-elevenlabs.mp3',
   'hook-impact': 'assets/audio/hook-impact.wav',
   'ui-tick': 'assets/audio/ui-tick.wav',
   'wheel-tick': 'assets/audio/wheel-tick.wav',
@@ -18,7 +19,7 @@ const audioFiles: Record<string, string> = {
 
 export const AudioBus: React.FC<{story: StoryPlanV1}> = ({story}) => {
   const revealFrame = story.revealRegistry.find((rule) => rule.revealId === 'final-result')?.earliestFrame ?? story.durationInFrames;
-  const voiceCue = story.tracks.audio.find((cue) => cue.role === 'voice');
+  const voiceCues = story.tracks.audio.filter((cue) => cue.role === 'voice');
   return <>{story.tracks.audio.map((cue) => {
     const file = audioFiles[cue.assetId];
     if (!file) return null;
@@ -28,7 +29,7 @@ export const AudioBus: React.FC<{story: StoryPlanV1}> = ({story}) => {
       ? (relativeFrame: number) => {
           const absolute = relativeFrame + cue.startFrame;
           const distance = Math.abs(absolute - revealFrame);
-          const underVoice = voiceCue && absolute >= voiceCue.startFrame && absolute < (voiceCue.endFrameExclusive ?? voiceCue.startFrame + 120);
+          const underVoice = voiceCues.some((voiceCue) => absolute >= voiceCue.startFrame && absolute < (voiceCue.endFrameExclusive ?? voiceCue.startFrame + 120));
           if (underVoice) return base * .38;
           return base * (distance < 20 ? .34 : 1);
         }

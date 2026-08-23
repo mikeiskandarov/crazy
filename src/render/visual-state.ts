@@ -64,11 +64,12 @@ function targetAngle(startAngle: number, cue: DeepReadonly<WheelCue>, segments: 
   return startAngle + Math.floor(cue.totalTurnsMilli / 1_000) * TAU + moduloDelta;
 }
 
-function wheelAngleAtFrame(frame: number, cues: readonly DeepReadonly<WheelCue>[], segments: readonly VisibleWheelSegment[]): number {
-  // The survival reel has one deliberate verdict spin. Keeping the wheel parked
-  // before that cue prevents the idle state from reading as several extra spins.
+function wheelAngleAtFrame(frame: number, cues: readonly DeepReadonly<WheelCue>[], segments: readonly VisibleWheelSegment[], ambient = false): number {
+  const ambientRadiansPerFrame = .0125;
   let angle = -0.2;
+  let cursorFrame = 0;
   for (const cue of cues) {
+    if (ambient) angle += Math.max(0, Math.min(frame, cue.startFrame) - cursorFrame) * ambientRadiansPerFrame;
     const target = targetAngle(angle, cue, segments);
     if (frame < cue.startFrame) return angle;
     if (frame <= cue.settleFrame) {
@@ -76,8 +77,9 @@ function wheelAngleAtFrame(frame: number, cues: readonly DeepReadonly<WheelCue>[
       return angle + (target - angle) * easedDeceleration(progress);
     }
     angle = target;
+    cursorFrame = cue.settleFrame;
   }
-  return angle;
+  return ambient && cues.length === 0 ? angle + frame * ambientRadiansPerFrame : angle;
 }
 
 function currentOutcome(simulation: DeepReadonly<SimulationResultV1>, currentRound: number): OutcomeEvent | undefined {
@@ -104,6 +106,33 @@ function resultTone(spec: DeepReadonly<ReelSpecV1>, simulation: DeepReadonly<Sim
   return 'neutral';
 }
 
+function survivalResultCategories(simulation: DeepReadonly<SimulationResultV1>, populationSize: number): NonNullable<NonNullable<VisualState['survivalExperience']>['resultCategories']> {
+  const finalScores = (simulation.population?.rankedCandidates ?? [])
+    .filter((candidate) => candidate.scoreId === 'highest-final-bankroll')
+    .map((candidate) => candidate.scoreMilli);
+  const selectedFinal = simulation.featuredRuns[0]?.summary.finalBankrollMinor ?? finalScores[0] ?? 0;
+  return [
+    {
+      id: 'rare-lucky',
+      label: 'RARE LUCKY',
+      rangeLabel: '$500–$2,000',
+      count: finalScores.filter((value) => value >= 50_000 && value <= 200_000).length,
+    },
+    {
+      id: 'very-lucky',
+      label: 'VERY LUCKY',
+      rangeLabel: '$3,000–$10,000',
+      count: finalScores.filter((value) => value >= 300_000 && value <= 1_000_000).length,
+    },
+    {
+      id: 'best-of-population',
+      label: `BEST OF ${populationSize.toLocaleString('en-US')}`,
+      rangeLabel: '$10,000–$30,000 FORECAST',
+      amountMinor: selectedFinal,
+    },
+  ];
+}
+
 export function resolveVisualState(input: {
   frame: number;
   spec: DeepReadonly<ReelSpecV1>;
@@ -115,8 +144,8 @@ export function resolveVisualState(input: {
   const currentRound = visibleRoundForBeat(beat, frame);
   const segments = uniqueWheelSegments(input.simulation);
   const isSurvivalExperience = input.spec.format.kind === 'survive-500';
-  const angle = wheelAngleAtFrame(frame, input.story.tracks.wheel, segments);
-  const priorAngle = wheelAngleAtFrame(Math.max(0, frame - 1), input.story.tracks.wheel, segments);
+  const angle = wheelAngleAtFrame(frame, input.story.tracks.wheel, segments, isSurvivalExperience);
+  const priorAngle = wheelAngleAtFrame(Math.max(0, frame - 1), input.story.tracks.wheel, segments, isSurvivalExperience);
   const activeWheelCue = input.story.tracks.wheel.find((cue) => frame >= cue.startFrame && frame <= cue.settleFrame);
   const roundOutcome = currentOutcome(input.simulation, currentRound);
   const revealAllowed = beat.visibility.allowedRevealIds.includes('final-result');
@@ -169,7 +198,7 @@ export function resolveVisualState(input: {
       angularVelocity: angle - priorAngle,
       spinning: Boolean(activeWheelCue && frame < activeWheelCue.settleFrame),
       settling: Boolean(activeWheelCue && frame >= activeWheelCue.startFrame + (activeWheelCue.settleFrame - activeWheelCue.startFrame) * 0.72),
-      pointerEngaged: !isSurvivalExperience || beat.kind === 'climax' || beat.kind === 'reveal' || beat.kind === 'outro',
+      pointerEngaged: true,
       mode: isSurvivalExperience && beat.kind !== 'climax' && beat.kind !== 'reveal' && beat.kind !== 'outro' ? 'ambient' : 'verdict',
       ...(outcome ? {currentOutcome: outcome} : {}),
       segments,
@@ -187,8 +216,11 @@ export function resolveVisualState(input: {
         label: band.toMinor === undefined ? `${formatMoney(band.fromMinor)}+` : band.fromMinor === 0 ? `<${formatMoney(band.toMinor)}` : `${formatMoney(band.fromMinor)}–${formatMoney(band.toMinor)}`,
         count: band.count,
       })),
-      selectedFinalBankrollMinor: input.simulation.featuredRuns[0]?.summary.finalBankrollMinor ?? 0,
-      bestFinalOutcomeLabel: selectedBestOutcome?.outcomeLabel ?? '—',
+      ...(revealAllowed ? {
+        selectedFinalBankrollMinor: input.simulation.featuredRuns[0]?.summary.finalBankrollMinor ?? 0,
+        bestFinalOutcomeLabel: selectedBestOutcome?.outcomeLabel ?? '—',
+        resultCategories: survivalResultCategories(input.simulation, populationSize),
+      } : {}),
     }} : {}),
     ...(finalResult ? {finalResult} : {}),
   };
